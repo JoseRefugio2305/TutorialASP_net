@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = "SecondPage";
+}
+
+<h2>SecondPage</h2>
+<b>Solo aparece el TempData porque si se especifica esta puede ser compartida entre acciones y otras vistas que no le corresponden, a diferencia de ViewBag y ViewData, que solo pueden ser usados en las vistas correspondientes a las acciones donde se crean</b>
+<div class="container">
+    <ul class="list-group">
+        <li class="list-group-item">
+            Your ViewBag value is <b>@ViewBag.EmployeeNameVB</b>
+        </li>
+        <li class="list-group-item">
+            Your ViewData value is <b>@ViewData["EmployeeNameVD"]</b>
+        </li>
+        <li class="list-group-item">
+            Your TempData value is <b>@TempData["EmployeeNameTD"]</b>
+        </li>
+        <li class="list-group-item">
+            <a href="/Test/Index">Pagina principal Test</a>
+        </li>
+    </ul>
+</div>

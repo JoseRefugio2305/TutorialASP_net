@@ -1,0 +1,99 @@
+﻿@model TutorialASP_net.Models.Employee
+@{
+    ViewBag.Title = "RegisterEmployee";
+}
+<style>
+    .error{
+        color:red;
+    }
+</style>
+<h2>RegisterEmployee</h2>
+<h4>Formulario haciendo uso de los html helpers de razor</h4>
+@using (Html.BeginForm("RegisterEmployee", "Test", FormMethod.Post))
+{
+    @Html.DropDownListFor(model => model.DepartmentId, ViewBag.DepartmentList as SelectList, "--Selecciona un Departamnto--", new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "Nombre del Empleado" })
+    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @placeholder = "Direccion" })
+    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.SiteName, new { @class = "form-control",@placeholder= "Ingresa el Nombre del Sitio" })
+    @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "error" })
+    <!--Lo de arriba es para mostrar los mensajes de error, cuando los campos no esten llenados con datos, el mensaje que se 
+        muestra es el que se especifica en la clase del modelo que se usa-->
+    <input type="submit" value="Submit" class="btn btn-block btn-success" />
+}
+<br />
+<br />
+<h3>Formulario que hace submit on fetch</h3>
+<form id="myNewEmployee">
+    @Html.DropDownListFor(model => model.DepartmentId, ViewBag.DepartmentList as SelectList, "--Selecciona un Departamnto--", new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "Nombre del Empleado" })
+    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @placeholder = "Direccion" })
+    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.SiteName, new { @class = "form-control", @placeholder = "Ingresa el Nombre del Sitio" })
+    @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "error" })
+    <!--Lo de arriba es para mostrar los mensajes de error, cuando los campos no esten llenados con datos, el mensaje que se
+        muestra es el que se especifica en la clase del modelo que se usa-->
+    <input type="button" value="Submit" class="btn btn-block btn-success" id="btnSubmit" onclick="SubmitForm()"/>
+</form>
+<div id="divgiph" style="display:none;">
+    <div style="width:100%;height:0;padding-bottom:100%;position:relative;"><iframe src="https://giphy.com/embed/3oEjI6SIIHBdRxXI40" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
+</div>
+<br />
+<br />
+<h4>Formulario en un model de bootstrap</h4>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Registrar empleado
+</button>
+<div class="modal" id="exampleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <form id="myNewEmployeeModal">
+                        @Html.DropDownListFor(model => model.DepartmentId, ViewBag.DepartmentList as SelectList, "--Selecciona un Departamnto--", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "error" })
+                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "Nombre del Empleado" })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "error" })
+                        @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @placeholder = "Direccion" })
+                        @Html.ValidationMessageFor(model => model.Address, "", new { @class = "error" })
+                        @Html.TextBoxFor(model => model.SiteName, new { @class = "form-control", @placeholder = "Ingresa el Nombre del Sitio" })
+                        @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "error" })
+                        <!--Lo de arriba es para mostrar los mensajes de error, cuando los campos no esten llenados con datos, el mensaje que se
+            muestra es el que se especifica en la clase del modelo que se usa-->
+                        
+                    </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" value="Submit" class="btn btn-block btn-success" id="btnSubmit" onclick="SubmitForm()" />
+                <button type="button" class="btn btn-block btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function SubmitForm()
+    {
+        var data = document.getElementById('myNewEmployee')
+        data = new FormData(data)
+        document.getElementById("divgiph").style.display=""
+        fetch('/Test/RegisterEmployee', {
+            body: data,
+            method: "POST"
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert('Ingresado con Fetch')
+            document.getElementById("divgiph").style.display="none"
+        })
+    }
+</script>

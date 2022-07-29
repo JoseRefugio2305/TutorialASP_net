@@ -1,0 +1,151 @@
+﻿@model IEnumerable<TutorialASP_net.Models.Employee>
+@{
+    ViewBag.Title = "BDD";
+}
+
+<h2>BDD</h2>
+
+
+<h4>Informacion desde base de datos</h4>
+
+<div id="divEmployeeTable">
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>ID de Departamento</th>
+                <th>Departamento</th>
+                <th>Address</th>
+                <th colspan="2">Operaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.EmployeeID</td>
+                        <td>@item.Name</td>
+                        <td>@item.DepartmentId</td>
+                        <td>@item.DeptName</td>
+                        <td>@item.Address</td>
+                        @*<td><a class="btn btn-primary" href="/Test/EmployeeDetails?EmpId=@item.EmployeeID">Detalles</a></td>*@
+                        <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
+                        <td><a class="btn btn-danger" onclick="ConfirmDelete(@item.EmployeeID)"><i class="bi bi-trash-fill"></i></a></td>
+                        <input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">
+                        No existen nombres.
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+<br />
+<br />
+<h2>Vistas Parciales</h2>
+<h4>Las cards estan generadas cada una con diferentes metodos de renderizacion de vistas parciales</h4>
+<div class="row">
+    @Html.Partial("_PruebaPartialViewSimple")
+    @{
+        Html.RenderPartial("_PruebaPartialViewSimple", Model);
+    }
+    @{
+        Html.RenderAction("ShowPartial","Test",Model);
+    }
+</div>
+<script>
+    function ConfirmDelete(EmpID)
+    {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const paramsCom = {
+                    body: { EmployeeId: EmpID },
+                    method: "POST"
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Test/DeleteEmployee",
+                    data: { EmployeeId: EmpID },
+                    success: (response) => {
+                        if (response.result) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                            )
+                            setTimeout(() => {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Test/EmployeeTablePartial",
+                                    success: (response) => {
+                                        document.getElementById("divEmployeeTable").innerHTML = response
+                                    }
+                                })
+                                
+                            }, 500)
+                        }
+                        else {
+                            Swal.fire(
+                                'Error!',
+                                'There was a mistake',
+                                'error'
+                            )
+                        }
+                    }
+                })
+                //fetch("/Test/DeleteEmployee", paramsCom)
+                //    .then(response => response.json())
+                //    .then(data => {
+                //        if (data.result) {
+                //            Swal.fire(
+                //                'Deleted!',
+                //                'Your file has been deleted.',
+                //                'success'
+                //            )
+                //            setTimeout(() => {
+                //                $.ajax({
+                //                    type: "POST",
+                //                    url: "/Test/EmployeeTablePartial",
+                //                    success: (response) => {
+                //                        document.getElementById("divEmployeeTable").innerHTML=response
+                //                    }
+                //                })
+                //            }, 500)
+                //        }
+                //        else {
+                //            Swal.fire(
+                //                'Error!',
+                //                'There was a mistake',
+                //                'error'
+                //            )
+                //        }
+                //    })
+            }
+        })
+            
+    }
+   
+   
+</script>
+@if(ViewBag.error!=null)
+{
+    <p>@ViewBag.error</p>
+}

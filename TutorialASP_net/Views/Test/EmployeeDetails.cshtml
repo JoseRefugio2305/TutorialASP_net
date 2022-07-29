@@ -1,0 +1,42 @@
+﻿@model TutorialASP_net.Models.Employee
+@{
+    ViewBag.Title = "EmployeeDetails";
+}
+
+<h2>EmployeeDetails</h2>
+<h4>Informacion desde base de datos</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>ID de Departamento</th>
+            <th>Departamento</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {       
+            <tr>
+                <td>@Model.EmployeeID</td>
+                <td>@Model.Name</td>
+                <td>@Model.DepartmentId</td>
+                <td>@Model.DeptName</td>
+                <td>@Model.Address</td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td colspan="5">
+                    No existe el empleado seleccionado.
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<a class="btn btn-primary" href="/Test/BDD">Regresar</a>
+<br />
+<br />

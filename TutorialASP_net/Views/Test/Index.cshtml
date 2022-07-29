@@ -1,0 +1,166 @@
+﻿@model IEnumerable<TutorialASP_net.Models.Employee>
+@{
+    ViewBag.Title = "Index";
+    //Layout = null; //esta linea es para que la vista no herede el layout
+}
+
+<div class="row col-md-6">
+    <ul class="list-group">
+        <li class="list-group-item">@Html.ActionLink("Base de Datos", "BDD", "Test", new { @class = "btn btn-block btn-success" })</li>
+        <li class="list-group-item">@Html.ActionLink("Segunda Pagina", "SecondPage", "Test", new { @class = "btn btn-block btn-success" })</li>
+        <li class="list-group-item">@Html.ActionLink("Registrar Empleado", "RegisterEmployee", "Test", new { @class = "btn btn-block btn-success" })</li>
+    </ul>
+</div>
+
+<h2>Index</h2>
+<h3>@ViewBag.Name</h3>
+<br />
+<h4>Uso de ViewBag</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.NamesList != null)
+        {
+            foreach (var item in ViewBag.NamesList)
+            {
+                <tr>
+                    <td>
+                        @item
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td>
+                    No existen nombres.
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<br />
+<br />
+<h4>Uso de Models</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Departamento</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EmployeeID</td>
+                    <td>@item.Name</td>
+                    <td>@item.DeptName</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">
+                    No existen nombres.
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<br />
+<br />
+<h4>ViewBag Almacenando Models</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Departamento</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewBag.EmployeeList != null)
+        {
+            foreach (var item in ViewBag.EmployeeList)
+            {
+                <tr>
+                    <td>@item.EmployeeID</td>
+                    <td>@item.Name</td>
+                    <td>@item.DeptName</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">
+                    No existen nombres.
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+<br />
+<br />
+<h4>Uso de ViewData almecenando Models</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (ViewData["EmployeeList"] != null)
+        {
+            foreach (var item in ViewData["EmployeeList"] as List<TutorialASP_net.Models.Employee>)
+            {
+                <tr>
+                    <td>@item.EmployeeID</td>
+                    <td>@item.Name</td>
+                    <td>@item.DeptName</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td>
+                    No existen nombres.
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+
+
+<div class="container">
+    <ul class="list-group">
+        <li class="list-group-item">
+            Your ViewBag vakue is <b>@ViewBag.EmployeeNameVB</b>
+        </li>
+        <li class="list-group-item">
+            Your ViewData vakue is <b>@ViewData["EmployeeNameVD"]</b>
+        </li>
+        <li class="list-group-item">
+            Your TempData vakue is <b>@TempData["EmployeeNameTD"]</b>
+        </li>
+        <li class="list-group-item">
+            <a href="/Test/SecondPage">Pagina secundaria de TempData, ViewData y ViewBag</a>
+        </li>
+    </ul>
+</div>
