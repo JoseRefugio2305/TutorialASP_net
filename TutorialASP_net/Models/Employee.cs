@@ -19,5 +19,6 @@ namespace TutorialASP_net.Models
         public string Address { set; get; }
         [Required(ErrorMessage = "Ingresa el Sitio")]
         public string SiteName { set; get; }
+        public int SiteId { set; get; }
     }
 }

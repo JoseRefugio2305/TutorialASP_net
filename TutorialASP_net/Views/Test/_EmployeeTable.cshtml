@@ -7,7 +7,7 @@
             <th>ID de Departamento</th>
             <th>Departamento</th>
             <th>Address</th>
-            <th colspan="2">Operaciones</th>
+            <th colspan="3">Operaciones</th>
         </tr>
     </thead>
     <tbody>
@@ -15,17 +15,18 @@
         {
             foreach (var item in Model)
             {
-                <tr>
-                    <td>@item.EmployeeID</td>
-                    <td>@item.Name</td>
-                    <td>@item.DepartmentId</td>
-                    <td>@item.DeptName</td>
-                    <td>@item.Address</td>
-                    @*<td><a class="btn btn-primary" href="/Test/EmployeeDetails?EmpId=@item.EmployeeID">Detalles</a></td>*@
-                    <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
-                    <td><a class="btn btn-danger" onclick="ConfirmDelete(@item.EmployeeID)"><i class="bi bi-trash-fill"></i></a></td>
-                    <input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />
-                </tr>
+        <tr>
+            <td>@item.EmployeeID</td>
+            <td>@item.Name</td>
+            <td>@item.DepartmentId</td>
+            <td>@item.DeptName</td>
+            <td>@item.Address</td>
+            @*<td><a class="btn btn-primary" href="/Test/EmployeeDetails?EmpId=@item.EmployeeID">Detalles</a></td>*@
+            <td><a class="btn btn-warning" onclick="AddEditEmployee(@item.EmployeeID)"><i class="bi bi-pencil-square"></i></td>
+            <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
+            <td><a class="btn btn-danger" onclick="ConfirmDelete(@item.EmployeeID)"><i class="bi bi-trash-fill"></i></a></td>
+            @*<input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />*@
+        </tr>
             }
         }
         else

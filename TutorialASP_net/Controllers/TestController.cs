@@ -57,7 +57,7 @@ namespace TutorialASP_net.Controllers
             //MySqlConnection myConnection = new MySqlConnection("Database=MVCtutorial;Data Source=localhost;User Id=root;Password=");
             //myConnection.Open();
             bdd.con.Open();
-            MySqlCommand command = new MySqlCommand("SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId", bdd.con);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId WHERE e.IsDeleted=0", bdd.con);
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -76,7 +76,7 @@ namespace TutorialASP_net.Controllers
         public ActionResult EmployeeDetails(int EmpID)
         {
             bdd.con.Open();
-            MySqlCommand command = new MySqlCommand("SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId WHERE EmployeeId="+EmpID, bdd.con);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId WHERE e.IsDeleted=0 AND EmployeeId=" + EmpID, bdd.con);
             MySqlDataReader reader = command.ExecuteReader();
             Employee employee = new Employee();
             while (reader.Read())
@@ -89,6 +89,10 @@ namespace TutorialASP_net.Controllers
             }
             reader.Close();
             bdd.con.Close();
+            if (employee.EmployeeID == 0)
+            {
+                employee = null;
+            }
             return View(employee);
         }
 
@@ -162,7 +166,7 @@ namespace TutorialASP_net.Controllers
             bdd.con.Open();
             MySqlCommand command3 = new MySqlCommand();
             command3.Connection = bdd.con;
-            command3.CommandText = "DELETE FROM employee WHERE EmployeeId="+EmployeeId;
+            command3.CommandText = "UPDATE employee SET IsDeleted=1 WHERE EmployeeId="+EmployeeId;
 
             command3.ExecuteNonQuery();
 
@@ -171,13 +175,22 @@ namespace TutorialASP_net.Controllers
     
         }
 
-        public ActionResult EmployeeTablePartial()
+        public ActionResult EmployeeTablePartial(int option)
         {
             List<Employee> employeeListbdd = new List<Employee>();
             //MySqlConnection myConnection = new MySqlConnection("Database=MVCtutorial;Data Source=localhost;User Id=root;Password=");
             //myConnection.Open();
             bdd.con.Open();
-            MySqlCommand command = new MySqlCommand("SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId", bdd.con);
+            string consulta = "";
+            if (option == 0)
+            {
+                consulta = "SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId WHERE e.IsDeleted=0";
+            }
+            else
+            {
+                consulta = "SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId WHERE e.IsDeleted=1";
+            }
+            MySqlCommand command = new MySqlCommand(consulta, bdd.con);
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -199,6 +212,111 @@ namespace TutorialASP_net.Controllers
         public ActionResult ShowPartial()
         {
             return PartialView("_PruebaPartialViewSimple");
+        }
+
+        public ActionResult AddEditEmployee(int EmployeeId)
+        {
+            Employee employee = new Employee();
+            List<Department> departments = new List<Department>();
+            bdd.con.Open();
+            MySqlCommand commandD = new MySqlCommand("SELECT * FROM department", bdd.con);
+            MySqlDataReader readerD = commandD.ExecuteReader();
+            while (readerD.Read())
+            {
+                departments.Add(new Department
+                {
+                    DepartmentId = (int)readerD["DepartmentId"],
+                    DeptName = (string)readerD["DeptName"]
+                });
+            }
+            readerD.Close();
+            ViewBag.DepartmentList = new SelectList(departments, "DepartmentId", "DeptName");
+            if (EmployeeId > 0)
+            {
+                
+                MySqlCommand command = new MySqlCommand("SELECT * FROM employee AS e INNER JOIN department AS d ON e.DepartmentId=d.DepartmentId INNER JOIN sites AS s ON e.EmployeeId=s.EmployeeId WHERE e.EmployeeId=" + EmployeeId, bdd.con);
+                MySqlDataReader reader = command.ExecuteReader();
+                
+                while (reader.Read())
+                {
+                    employee.EmployeeID = (int)reader["EmployeeId"];
+                    employee.Name = (string)reader["Name"];
+                    employee.DepartmentId = (int)reader["DepartmentId"];
+                    employee.DeptName = (string)reader["DeptName"];
+                    employee.Address = (string)reader["Address"];
+                    employee.SiteId = (int)reader["SiteId"];
+                    employee.SiteName = (string)reader["SiteName"];
+                }
+
+                reader.Close();
+                
+            }
+            bdd.con.Close();
+            return PartialView("_AddEditEmployee", employee);
+        }
+        
+        public ActionResult AddEditEmployeeConfirm(Employee newedemp)
+        {
+            Boolean IsSuccess = false;
+            string message = "No se pudo llevar a cabo la accion";
+            if (ModelState.IsValid)
+            {
+                bdd.con.Open();
+                MySqlCommand command = new MySqlCommand();
+                switch (newedemp.EmployeeID)
+                {
+                    case 0:
+                        try
+                        {
+                            command.Connection = bdd.con;
+                            command.CommandText = "INSERT INTO employee (DepartmentId,Name,Address) Values (" + newedemp.DepartmentId + ",'" + newedemp.Name + "','" + newedemp.Address + "'); ";
+
+                            command.ExecuteNonQuery();
+                            MySqlCommand command2 = new MySqlCommand("SELECT MAX(EmployeeId) as EmployeeId FROM Employee", bdd.con);
+                            MySqlDataReader reader = command2.ExecuteReader();
+                            int lastempid = 0;
+                            while (reader.Read())
+                            {
+                                lastempid = (int)reader["EmployeeId"];
+                            }
+                            reader.Close();
+                            MySqlCommand command3 = new MySqlCommand();
+                            command3.Connection = bdd.con;
+                            command3.CommandText = "INSERT INTO Sites (EmployeeId, SiteName) VALUES (" + lastempid + ",'" + newedemp.SiteName + "')";
+                            command3.ExecuteNonQuery();
+                            message = "El empleado fue registrado con exito";
+                        }
+                        catch(Exception e)
+                        {
+                            message = "No fue posible registrar al empleado";
+                        }
+                        
+                        break;
+                    default:
+                        try
+                        {
+                            command.Connection = bdd.con;
+                            command.CommandText = "UPDATE employee SET DepartmentId=" + newedemp.DepartmentId + ",Name='" + newedemp.Name + "',Address='" + newedemp.Address + "' WHERE EmployeeId=" + newedemp.EmployeeID;
+
+                            command.ExecuteNonQuery();
+                            MySqlCommand command4 = new MySqlCommand();
+                            command4.Connection = bdd.con;
+                            command4.CommandText = "UPDATE Sites SET SiteName='" + newedemp.SiteName + "' WHERE EmployeeId=" + newedemp.EmployeeID;
+                            command4.ExecuteNonQuery();
+                            message = "Informacion Actualizada";
+                        }
+                        catch(Exception e)
+                        {
+                            message = "No fue posible actualizar la informacion";
+                        }
+                        
+                        break;
+                }
+                bdd.con.Close();
+                IsSuccess = true;
+            }
+            
+            return Json(new { response = IsSuccess, message=message }, JsonRequestBehavior.AllowGet);
         }
     }
 }

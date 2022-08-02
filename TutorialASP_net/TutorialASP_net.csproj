@@ -397,6 +397,7 @@
     <Content Include="Views\Test\RegisterEmployee.cshtml" />
     <Content Include="Views\Shared\_PruebaPartialViewSimple.cshtml" />
     <Content Include="Views\Test\_EmployeeTable.cshtml" />
+    <Content Include="Views\Test\_AddEditEmployee.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

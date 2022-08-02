@@ -1,0 +1,21 @@
+﻿@model TutorialASP_net.Models.Employee
+<form id="formAddEditEmployee">
+    @Html.HiddenFor(m => m.EmployeeID)
+    @Html.DropDownListFor(model => model.DepartmentId, ViewBag.DepartmentList as SelectList, "--Selecciona un Departamnto--", new { @class = "form-control" })
+    @Html.ValidationMessageFor(model => model.DepartmentId, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @placeholder = "Nombre del Empleado" })
+    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "error" })
+    @Html.TextBoxFor(model => model.Address, new { @class = "form-control", @placeholder = "Direccion" })
+    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "error" })
+    @Html.HiddenFor(m => m.SiteId)
+    @Html.TextBoxFor(model => model.SiteName, new { @class = "form-control", @placeholder = "Ingresa el Nombre del Sitio" })
+    @Html.ValidationMessageFor(model => model.SiteName, "", new { @class = "error" })
+    <!--Lo de arriba es para mostrar los mensajes de error, cuando los campos no esten llenados con datos, el mensaje que se
+        muestra es el que se especifica en la clase del modelo que se usa-->
+    <a class="btn btn-block btn-success" id="btnSubmit" onclick="SubmitFormAddEdit()"> @if (Model.EmployeeID > 0)
+    { <span>Update</span>}
+    else { <span>Save</span>}</a>
+</form>
+@*<script>
+
+</script>*@

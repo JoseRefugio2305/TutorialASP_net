@@ -6,8 +6,19 @@
 <h2>BDD</h2>
 
 
-<h4>Informacion desde base de datos</h4>
 
+<h4>Informacion desde base de datos</h4>
+<br />
+<a class="btn btn-primary" onclick="AddEditEmployee(0)">New</a>
+<br />
+<div class="btn-group btn-group-lg" role="group" aria-label="">
+    <a class="btn btn-block btn-primary" onclick="ChangeEmployeeList(0)" id="btnActivos">
+        Empleados Activos
+    </a>
+    <a class="btn btn-block " onclick="ChangeEmployeeList(1)" id="btnInActivos">
+        Empleados Inactivos
+    </a>
+</div>
 <div id="divEmployeeTable">
     <table class="table table-dark table-striped">
         <thead>
@@ -17,7 +28,7 @@
                 <th>ID de Departamento</th>
                 <th>Departamento</th>
                 <th>Address</th>
-                <th colspan="2">Operaciones</th>
+                <th colspan="3">Operaciones</th>
             </tr>
         </thead>
         <tbody>
@@ -31,10 +42,10 @@
                         <td>@item.DepartmentId</td>
                         <td>@item.DeptName</td>
                         <td>@item.Address</td>
-                        @*<td><a class="btn btn-primary" href="/Test/EmployeeDetails?EmpId=@item.EmployeeID">Detalles</a></td>*@
+                        <td><a class="btn btn-warning" onclick="AddEditEmployee(@item.EmployeeID)"><i class="bi bi-pencil-square"></i></td>
                         <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
                         <td><a class="btn btn-danger" onclick="ConfirmDelete(@item.EmployeeID)"><i class="bi bi-trash-fill"></i></a></td>
-                        <input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />
+                        @*<input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />*@
                     </tr>
                 }
             }
@@ -50,10 +61,33 @@
         </tbody>
     </table>
 </div>
+
+<!--Modal de editar informacion de empleado-->
+<div class="modal fade" id="ModalAddEditEmployee" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalBodyAddEditEmployee">
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-block btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <br />
 <br />
 <h2>Vistas Parciales</h2>
 <h4>Las cards estan generadas cada una con diferentes metodos de renderizacion de vistas parciales</h4>
+<p>RenderPartial es un metodo para llamar a una vesta parcial mas rapido que Partial, Partial retorna una cadena HTML que puede ser almacenada en una variable, ademas de que no necesita de una accion para funcionar;
+    mientras que RenderPartial, es un metodo que retorna el HTML de la vista directamente en la respuesta HTTP, es decir, usa el mismo objeto TextWriter que es usado en la plantilla actual,
+    ademas de que est retorna un vacio, a diferencia de Partial que retorna una cadena.</p>
 <div class="row">
     @Html.Partial("_PruebaPartialViewSimple")
     @{
@@ -88,18 +122,18 @@
                         if (response.result) {
                             Swal.fire(
                                 'Deleted!',
-                                'Your file has been deleted.',
+                                'El empleado fue eliminado',
                                 'success'
                             )
                             setTimeout(() => {
                                 $.ajax({
                                     type: "POST",
-                                    url: "/Test/EmployeeTablePartial",
+                                    url: "/Test/EmployeeTablePartial?option=0",
                                     success: (response) => {
                                         document.getElementById("divEmployeeTable").innerHTML = response
                                     }
                                 })
-                                
+
                             }, 500)
                         }
                         else {
@@ -140,10 +174,83 @@
                 //    })
             }
         })
-            
+
     }
-   
-   
+
+    function AddEditEmployee(EmployeeID)
+    {
+        const paramsCom = {
+            body: { EmployeeId: EmployeeID },
+            method: "POST"
+        }
+        $.ajax({
+            type: "POST",
+            data: { EmployeeId: EmployeeID },
+            url: "/Test/AddEditEmployee",
+            success: (response) => {
+                document.getElementById("ModalBodyAddEditEmployee").innerHTML = response
+                $("#ModalTitle").html("Editar Empleado")
+                $("#ModalAddEditEmployee").modal("show")
+                
+            }
+        })
+    }
+
+    function SubmitFormAddEdit() {
+        var data = document.getElementById('formAddEditEmployee')
+        data = new FormData(data)
+        fetch('/Test/AddEditEmployeeConfirm', {
+            body: data,
+            method: "POST"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response) {
+                    Swal.fire(
+                        'Correcto',
+                        data.message,
+                        'success'
+                    )
+                }
+                else
+                {
+                    Swal.fire(
+                        'Error',
+                        data.message,
+                        'error'
+                    )
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Test/EmployeeTablePartial?option=0",
+                    success: (response) => {
+                        $("#ModalAddEditEmployee").modal("hide")
+                        document.getElementById("divEmployeeTable").innerHTML = response
+                    }
+                })
+            })
+    }
+
+    function ChangeEmployeeList(option)
+    {
+        $.ajax({
+            type: "POST",
+            url: "/Test/EmployeeTablePartial?option=" + option,
+            success: (response) => {
+                document.getElementById("divEmployeeTable").innerHTML = response
+                if (option == 0) {
+                    document.getElementById("btnActivos").classList.add("btn-primary")
+                    document.getElementById("btnInActivos").classList.remove("btn-primary")
+                }
+                else
+                {
+                    document.getElementById("btnActivos").classList.remove("btn-primary")
+                    document.getElementById("btnInActivos").classList.add("btn-primary")
+                }
+                
+            }
+        })
+    }
 </script>
 @if(ViewBag.error!=null)
 {
