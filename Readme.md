@@ -16,6 +16,9 @@ La conexión a MySQL esta en el archivo Conexion.cs en el directorio Datos, ahí
 ```c#
 public class Conexion
     {
-        public MySqlConnection con = new MySqlConnection("Database=<DataBaseName>;Data Source=<Servidor>;User Id=<user>;Password=<Pass>");
+        public MySqlConnection con = new MySqlConnection("Database=<DataBaseName>;"+
+                                                          "Data Source=<Servidor>;"+
+                                                          "User Id=<user>;"+
+                                                          "Password=<Pass>");
     }
 ```
