@@ -238,7 +238,8 @@
             url: "/Test/EmployeeTablePartial?option=" + option,
             success: (response) => {
                 document.getElementById("divEmployeeTable").innerHTML = response
-                if (option == 0) {
+                if (option == 0)
+                {
                     document.getElementById("btnActivos").classList.add("btn-primary")
                     document.getElementById("btnInActivos").classList.remove("btn-primary")
                 }
