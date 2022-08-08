@@ -64,6 +64,9 @@
         var usernameval = document.getElementById("username")
         var expremail = /^(([^<>()[\]\.,;:\s@@\"]+(\.[^<>()[\]\.,;:\s@@\"]+)*)|(\".+\"))@@(([^<>()[\]\.,;:\s@@\"]+\.)+[^<>()[\]\.,;:\s@@\"]{2,})$/i
         var expreusername = new RegExp("^([A-Za-z0-9])+$");
+        if (!$("#RegisterUserForm").valid()) {
+            return false
+        }
         if (expremail.test(emailval.value) && expreusername.test(usernameval.value)) {
             var data = document.getElementById("RegisterUserForm")
             data = new FormData(data)

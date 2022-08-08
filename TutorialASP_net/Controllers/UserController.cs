@@ -81,7 +81,7 @@ namespace TutorialASP_net.Controllers
         }
 
         [HttpPost]
-        public JsonResult LoginUser(User logUser)
+        public JsonResult LoginUser(LogeoUser logUser)
         {
             Boolean IsSuccess = false;
             string message = "";

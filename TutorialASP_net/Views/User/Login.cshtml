@@ -1,4 +1,4 @@
-﻿@model TutorialASP_net.Models.User
+﻿@model TutorialASP_net.Models.LogeoUser
 @{
     ViewBag.Title = "Login";
     if (Session["userid"] != null)
@@ -56,45 +56,38 @@
 
 <script>
     function LoginUser() {
-        var emailval = document.getElementById("email")
-        var expremail = /^(([^<>()[\]\.,;:\s@@\"]+(\.[^<>()[\]\.,;:\s@@\"]+)*)|(\".+\"))@@(([^<>()[\]\.,;:\s@@\"]+\.)+[^<>()[\]\.,;:\s@@\"]{2,})$/i
-        
-        if (expremail.test(emailval.value)) {
-            var data = document.getElementById("LoginUserForm")
-            data = new FormData(data)
-            fetch("/User/LoginUser", {
-                body: data,
-                method: "POST"
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        Swal.fire(
-                            'Bienvenido',
-                            data.message,
-                            'success'
-                        )
-                        setTimeout(() => {
-                            window.location.href = "/Home/"
 
-                        }, 1000)
-                    }
-                    else {
-                        Swal.fire(
-                            'Error',
-                            data.message,
-                            'error'
-                        )
-                    }
-                })
+        if (!$("#LoginUserForm").valid()) {
+            return false
         }
-        else {
-            Swal.fire(
-                'Error',
-                "El correo no esta escrito en el formato correcto",
-                'error'
-            )
-        }
+
+        var data = document.getElementById("LoginUserForm")
+        data = new FormData(data)
+        fetch("/User/LoginUser", {
+            body: data,
+            method: "POST"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Bienvenido',
+                        data.message,
+                        'success'
+                    )
+                    setTimeout(() => {
+                        window.location.href = "/Home/"
+
+                    }, 1000)
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        data.message,
+                        'error'
+                    )
+                }
+            })
 
     }
 </script>
