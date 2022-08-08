@@ -12,6 +12,7 @@ namespace TutorialASP_net.Controllers
 {
     public class TestController : Controller
     {
+        
         Conexion bdd = new Conexion();
         // GET: Test
         public ActionResult Index()
@@ -161,7 +162,7 @@ namespace TutorialASP_net.Controllers
             return View(newemployee);
         }
         
-        public ActionResult DeleteEmployee(int EmployeeId)
+        public JsonResult DeleteEmployee(int EmployeeId)
         {
             bdd.con.Open();
             MySqlCommand command3 = new MySqlCommand();
@@ -255,7 +256,7 @@ namespace TutorialASP_net.Controllers
             return PartialView("_AddEditEmployee", employee);
         }
         
-        public ActionResult AddEditEmployeeConfirm(Employee newedemp)
+        public JsonResult AddEditEmployeeConfirm(Employee newedemp)
         {
             Boolean IsSuccess = false;
             string message = "No se pudo llevar a cabo la accion";

@@ -1,6 +1,14 @@
 ﻿@model TutorialASP_net.Models.Employee
 @{
     ViewBag.Title = "RegisterEmployee";
+    Layout = "~/Views/Shared/_LayoutTest.cshtml";
+    if (Session["role"]!=null)
+    {
+                if (Session["role"].ToString() == "1")
+                {
+                    Response.Redirect("/Test/", false);
+                }
+    }
 }
 <style>
     .error{

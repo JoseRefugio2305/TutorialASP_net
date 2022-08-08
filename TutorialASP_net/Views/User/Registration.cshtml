@@ -1,0 +1,105 @@
+﻿@model TutorialASP_net.Models.User
+@{
+    ViewBag.Title = "Registration";
+    if (Session["userid"] != null)
+    {
+        <script>
+            window.location.href = "/Home/"
+        </script>
+    }
+}
+
+<style>
+    .card-formReg:hover {
+        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card card-formReg">
+            <img src="https://media.giphy.com/media/PKl9JTqnoiKtO/giphy.gif" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">Card</h5>
+                <p class="card-text">Bienvenido</p>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7 offset-md-1">
+        <div class="card card-formReg">
+            <h5 class="card-header text-center">Registrate</h5>
+            <div class="card-body">
+
+                <form id="RegisterUserForm">
+                    <div class="form-group">
+                        <label>Nombre de Usuario</label>
+                        @Html.TextBoxFor(m => m.username, new { @class = "form-control col-md-12", @placeholder = "Nombre de Usuario" })
+                        @Html.ValidationMessageFor(m => m.username, "", new { @class = "error" })
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electronico</label>
+                        @Html.TextBoxFor(m => m.email, new { @class = "form-control col-md-12", @placeholder = "Email" })
+                        @Html.ValidationMessageFor(m => m.email, "", new { @class = "error" })
+                    </div>
+                    <div class="form-group">
+                        <label>Contrasena</label>
+                        @Html.PasswordFor(m => m.password, new { @class = "form-control col-md-12", @placeholder = "Contrasena" })
+                        @Html.ValidationMessageFor(m => m.password, "", new { @class = "error" })
+                    </div>
+                    <div class="form-group">
+                        <a onclick="RegisterUser()" class="btn btn-primary btn-block">Submit</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function RegisterUser() {
+        var emailval = document.getElementById("email")
+        var usernameval = document.getElementById("username")
+        var expremail = /^(([^<>()[\]\.,;:\s@@\"]+(\.[^<>()[\]\.,;:\s@@\"]+)*)|(\".+\"))@@(([^<>()[\]\.,;:\s@@\"]+\.)+[^<>()[\]\.,;:\s@@\"]{2,})$/i
+        var expreusername = new RegExp("^([A-Za-z0-9])+$");
+        if (expremail.test(emailval.value) && expreusername.test(usernameval.value)) {
+            var data = document.getElementById("RegisterUserForm")
+            data = new FormData(data)
+            fetch("/User/RegisterUser", {
+                body: data,
+                method: "POST"
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire(
+                            'Correcto',
+                            data.message,
+                            'success'
+                        )
+                        setTimeout(() => {
+                            window.location.href = "/User/Login"
+
+                        }, 1000)
+                    }
+                    else {
+                        Swal.fire(
+                            'Error',
+                            data.message,
+                            'error'
+                        )
+                    }
+                })
+        }
+        else {
+            Swal.fire(
+                'Error',
+                "El correo o usuario esta escritos incorrectamente",
+                'error'
+            )
+        }
+
+    }
+</script>

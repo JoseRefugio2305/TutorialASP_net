@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<TutorialASP_net.Models.Employee>
 @{
     ViewBag.Title = "BDD";
+    Layout = "~/Views/Shared/_LayoutTest.cshtml";
 }
 
 <h2>BDD</h2>
@@ -15,7 +16,7 @@
     <a class="btn btn-block btn-primary" onclick="ChangeEmployeeList(0)" id="btnActivos">
         Empleados Activos
     </a>
-    <a class="btn btn-block " onclick="ChangeEmployeeList(1)" id="btnInActivos">
+    <a class="btn btn-block" onclick="ChangeEmployeeList(1)" id="btnInActivos">
         Empleados Inactivos
     </a>
 </div>
