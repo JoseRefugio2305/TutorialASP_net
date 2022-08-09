@@ -6,9 +6,11 @@ using System.Web.Mvc;
 using TutorialASP_net.Models;
 using TutorialASP_net.Datos;
 using MySql.Data.MySqlClient;
+using TutorialASP_net.Filters;
 
 namespace TutorialASP_net.Controllers
 {
+    
     public class UserController : Controller
     {
         // GET: User

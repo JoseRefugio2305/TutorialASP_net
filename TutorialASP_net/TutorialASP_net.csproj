@@ -134,6 +134,8 @@
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Datos\Conexion.cs" />
+    <Compile Include="Filters\AuthorizationUser.cs" />
+    <Compile Include="Filters\CheckSession.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

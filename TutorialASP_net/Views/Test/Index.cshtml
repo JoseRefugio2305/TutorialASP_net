@@ -8,7 +8,12 @@
     <ul class="list-group">
         <li class="list-group-item">@Html.ActionLink("Base de Datos", "BDD", "Test", new { @class = "btn btn-block btn-success" })</li>
         <li class="list-group-item">@Html.ActionLink("Segunda Pagina", "SecondPage", "Test", new { @class = "btn btn-block btn-success" })</li>
-        <li class="list-group-item">@Html.ActionLink("Registrar Empleado", "RegisterEmployee", "Test", new { @class = "btn btn-block btn-success" })</li>
+        @{
+            if (Session["role"].ToString()!="1")
+            {
+                <li class="list-group-item">@Html.ActionLink("Registrar Empleado", "RegisterEmployee", "Test", new { @class = "btn btn-block btn-success" })</li>
+            }
+        }
     </ul>
 </div>
 

@@ -7,14 +7,17 @@ using TutorialASP_net.Models;
 using TutorialASP_net.Datos;
 using MySql.Data.MySqlClient;
 using System.Data;
+using TutorialASP_net.Filters;
 
 namespace TutorialASP_net.Controllers
 {
+
     public class TestController : Controller
     {
-        
+
         Conexion bdd = new Conexion();
         // GET: Test
+        [AuthorizationUser(role: "123")]
         public ActionResult Index()
         {
             ViewBag.Name = "Jose Refugio";
@@ -45,12 +48,12 @@ namespace TutorialASP_net.Controllers
             TempData.Keep();//Con esta linea le decimos que el TempData permanezca y pueda ser usado en una vista diferente a la de index
             return View(employeeList);
         }
-
+        [AuthorizationUser(role:"123")]
         public ActionResult SecondPage()
         {
             return View();
         }
-
+        [AuthorizationUser(role:"123")]
         public ActionResult BDD()
         {
             
@@ -74,6 +77,7 @@ namespace TutorialASP_net.Controllers
             bdd.con.Close();
             return View(employeeListbdd);
         }
+        [AuthorizationUser(role: "123")]
         public ActionResult EmployeeDetails(int EmpID)
         {
             bdd.con.Open();
@@ -96,7 +100,7 @@ namespace TutorialASP_net.Controllers
             }
             return View(employee);
         }
-
+        [AuthorizationUser(role: "23")]
         public ActionResult RegisterEmployee()
         {
             List<Department> departments = new List<Department>();
@@ -116,7 +120,7 @@ namespace TutorialASP_net.Controllers
             ViewBag.DepartmentList = new SelectList(departments, "DepartmentId", "DeptName");
             return View();
         }
-
+        [AuthorizationUser(role: "23")]
         [HttpPost]
         public ActionResult RegisterEmployee(Employee newemployee)
         {//newemployee.Address!=null && newemployee.DepartmentId!=0 && newemployee.Name!=null && newemployee.SiteName!=null
@@ -161,7 +165,7 @@ namespace TutorialASP_net.Controllers
             ViewBag.DepartmentList = new SelectList(departments, "DepartmentId", "DeptName");
             return View(newemployee);
         }
-        
+        [AuthorizationUser(role: "23")]
         public JsonResult DeleteEmployee(int EmployeeId)
         {
             bdd.con.Open();
@@ -214,7 +218,7 @@ namespace TutorialASP_net.Controllers
         {
             return PartialView("_PruebaPartialViewSimple");
         }
-
+        [AuthorizationUser(role: "23")]
         public ActionResult AddEditEmployee(int EmployeeId)
         {
             Employee employee = new Employee();
@@ -255,7 +259,7 @@ namespace TutorialASP_net.Controllers
             bdd.con.Close();
             return PartialView("_AddEditEmployee", employee);
         }
-        
+        [AuthorizationUser(role: "23")]
         public JsonResult AddEditEmployeeConfirm(Employee newedemp)
         {
             Boolean IsSuccess = false;
