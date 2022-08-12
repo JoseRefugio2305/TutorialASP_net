@@ -10,7 +10,7 @@
 
 <h4>Informacion desde base de datos</h4>
 <br />
-@if (Session["role"].ToString() == "1")
+@if (Session["role"].ToString() != "1")
 {
     <a class="btn btn-primary" onclick="AddEditEmployee(0)">New</a>
 }

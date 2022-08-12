@@ -21,11 +21,18 @@
             <td>@item.DepartmentId</td>
             <td>@item.DeptName</td>
             <td>@item.Address</td>
-            @*<td><a class="btn btn-primary" href="/Test/EmployeeDetails?EmpId=@item.EmployeeID">Detalles</a></td>*@
-            <td><a class="btn btn-warning" onclick="AddEditEmployee(@item.EmployeeID)"><i class="bi bi-pencil-square"></i></td>
-            <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
-            <td><a class="btn btn-danger" onclick="ConfirmDelete(@item.EmployeeID)"><i class="bi bi-trash-fill"></i></a></td>
-            @*<input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />*@
+            <td>@item.Address</td>
+            @if (Session["role"].ToString() == "1")
+            {
+                <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
+            }
+            else
+            {
+                <td><a class="btn btn-warning" onclick="AddEditEmployee(@item.EmployeeID)"><i class="bi bi-pencil-square"></i></td>
+                <td>@Html.ActionLink("Detalles", "EmployeeDetails", new { EmpID = item.EmployeeID }, new { @class = "btn btn-block btn-primary" })</td>
+                <td><a class="btn btn-danger" onclick="ConfirmDelete(@item.EmployeeID)"><i class="bi bi-trash-fill"></i></a></td>
+                @*<input type="hidden" value="@item.EmployeeID" id="employeeIdDelete" />*@
+            }
         </tr>
             }
         }

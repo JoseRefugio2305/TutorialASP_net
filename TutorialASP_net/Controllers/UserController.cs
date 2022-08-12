@@ -66,7 +66,7 @@ namespace TutorialASP_net.Controllers
                 }
                 catch (Exception e)
                 {
-                    message = "Ocurrio un error al intentar el registro de usuario" + e;
+                    message = "Ocurrio un error al intentar el registro de usuario";
                 }
                 
             }
@@ -89,12 +89,13 @@ namespace TutorialASP_net.Controllers
             string message = "";
             if (logUser.email!=null && logUser.password!=null)
             {
-                try
-                {
+                //try
+                //{
                     bdd.con.Open();
                     MySqlCommand command = new MySqlCommand();
                     command.Connection = bdd.con;
-                    command.CommandText = "SELECT * FROM siteuser WHERE email='"+logUser.email+"' AND password='"+logUser.password+"'";
+                    //command.CommandText = "SELECT * FROM siteuser WHERE email='"+logUser.email+"' AND password='"+logUser.password+"'";
+                    command.CommandText = "CALL `LoginUser`('"+logUser.email.Trim()+"', '"+logUser.password.Trim()+"')";
                     MySqlDataReader reader = command.ExecuteReader();
                     User usuario = new User();
                     while (reader.Read())
@@ -123,11 +124,11 @@ namespace TutorialASP_net.Controllers
                     }
                     bdd.con.Close();
 
-                }
-                catch (Exception e)
-                {
-                    message = "Ocurrio un error al intentar el registro de usuario" + e;
-                }
+                //}
+                //catch (Exception e)
+                //{
+                //    message = "Ocurrio un error al intentar el inicio de usuario" + e;
+                //}
 
             }
             else
