@@ -23,13 +23,13 @@ namespace TutorialASP_net.ChatClasses
                 command.ExecuteNonQuery();
                 
                 bdd.con.Close();
-
+                Clients.All.sendChat(name, message, profileChatImg);
             }
             catch (Exception e)
             {
-                message = "Ocurrio un error al intentar el registro de usuario";
+                message = "Ocurrio un error al enviar el mensaje"+e;
             }
-            Clients.All.sendChat(name, message, profileChatImg);
+            
         }
     }
 }

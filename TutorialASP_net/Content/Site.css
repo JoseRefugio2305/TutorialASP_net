@@ -87,3 +87,7 @@ textarea {
 .received_withd_msg {
     width: 57%;
 }
+
+.error{
+    color:red;
+}

@@ -1,0 +1,203 @@
+﻿@model TutorialASP_net.Models.User
+@{
+    ViewBag.Title = "Perfil de " + Session["username"];
+}
+
+
+@if (Model != null)
+{
+    if (ViewBag.isowner)
+    {
+        <div class="card">
+            <h2 class="text-center card-header">Perfil</h2>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6" style="text-align:center">
+                        <img src="@Model.profile_img" id="imgprofileprev" class="col-12" style="width:40%;" />
+                        <form id="profImgForm">
+                            <div class="form-group">
+
+                                <label for="usernameE">Cambiar Imagen de Perfil</label>
+                                @Html.TextBoxFor(m => m.ImgProfileFile, new { @type = "file", @accept = "image/*", @class = "col-md-12", @onchange = "OnchangePhoto()" })
+                                @Html.ValidationMessageFor(m => m.ImgProfileFile, "", new { @class = "error" })
+                            </div>
+                        </form>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <button class="btn btn-success form-control" onclick="ConfirmEditionPhoto()" disabled id="GuardarEdicionPhoto">
+                                    Guardar
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn btn-secondary form-control" href="/User/UserProfile?iduser=@Model.userid" disabled id="CancelarEdicionPhoto">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <form id="formUserData">
+                            <input type="hidden" value="@Model.userid" id="useridE" />
+                            <div class="form-group">
+                                <label for="usernameE">Email address</label>
+                                @Html.TextBoxFor(m => m.username, new { @class = "form-control col-md-12", @placeholder = "Nombre de Usuario", @onchange = "OnchangeDataUser()" })
+                                @Html.ValidationMessageFor(m => m.username, "", new { @class = "error" })
+                            </div>
+                            <div class="form-group">
+                                <label for="emailE">Email address</label>
+                                @Html.TextBoxFor(m => m.email, new { @class = "form-control col-md-12", @placeholder = "Email", @onchange = "OnchangeDataUser()" })
+                                @Html.ValidationMessageFor(m => m.email, "", new { @class = "error" })
+                            </div>
+
+                        </form>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <button class="btn btn-success form-control" onclick="ConfirmEdition()" disabled id="GuardarEdicion">
+                                    Guardar
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <a class="btn btn-secondary form-control" href="/User/UserProfile?iduser=@Model.userid" disabled id="CancelarEdicion">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <h2 class="text-center card-header">Perfil</h2>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12" style="text-align:center">
+                        <img src="@Model.profile_img" id="imgprofileprev" class="col-12" style="width:40%;" />
+                        
+                    </div>
+                    <div class="col-md-12 text-center">
+                        <div class="card-text">
+                            @Model.username
+                        </div>
+                        <div class="card-text">
+                            @Model.email
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+}
+else
+{
+    <div class="card">
+        <h2 class="text-center card-header">Perfil</h2>
+        <div class="card-body">
+            <h2 class="text-center">Usuario No Encontrado</h2>
+        </div>
+    </div>
+}
+
+<script>
+    function ConfirmEdition() {
+        if (!$("#formUserData").valid()) {
+
+            return false
+        }
+        var data = document.getElementById("formUserData")
+        data = new FormData(data)
+        fetch("/User/EditProfile", {
+            method: "POST", body: data
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response == "OK") {
+                    Swal.fire(
+                        'Correcto',
+                        data.message,
+                        'success'
+                    )
+                    setTimeout(() => {
+                        window.location.reload()
+
+                    }, 1000)
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        data.message,
+                        'error'
+                    )
+                }
+            })
+    }
+    function ConfirmEditionPhoto() {
+        if (!$("#profImgForm").valid()) {
+            return false
+        }
+        var data = document.getElementById("profImgForm")
+        data = new FormData(data)
+
+        fetch("/User/EditImgProfile", {
+            method: "POST", body: data
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response == "OK") {
+                    Swal.fire(
+                        'Correcto',
+                        data.message,
+                        'success'
+                    )
+                    setTimeout(() => {
+                        window.location.reload()
+
+                    }, 1000)
+                }
+                else {
+                    Swal.fire(
+                        'Error',
+                        data.message,
+                        'error'
+                    )
+                }
+            })
+    }
+
+    function OnchangePhoto() {
+        //var photoS = document.getElementById("ImgProfileFile").files
+        //console.log(photoS)
+        //if (photoS && photoS[0]) {
+        //    console.log("ss")
+        //    ReadImage(photoS[0])
+        //}
+        document.getElementById("GuardarEdicionPhoto").removeAttribute("disabled")
+    }
+
+    function ReadImage(file) {
+        var reader = new FileReader
+        var image = new Image
+        reader.readAsDataURL(file)
+        reader.onload = function (_file) {
+            image.src = _file.target.result
+            image.onload = function () {
+                var height = this.height
+                var width = this.width
+                var type = file.type
+                var size = ~~(file.size / 1024) + "KB"
+
+                document.getElementById("imgprofileprev").src = _file.target.result
+            }
+        }
+    }
+
+    function OnchangeDataUser() {
+        document.getElementById("GuardarEdicion").removeAttribute("disabled")
+    }
+
+
+</script>

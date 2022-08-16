@@ -20,5 +20,7 @@ namespace TutorialASP_net.Models
         public string profile_img { set; get; }
 
         public int roleid { set; get; }
+        [Required(ErrorMessage = "Sube una Imgen")]
+        public HttpPostedFileBase ImgProfileFile { set; get; }
     }
 }
