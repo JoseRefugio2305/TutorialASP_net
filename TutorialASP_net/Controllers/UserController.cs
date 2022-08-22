@@ -46,8 +46,7 @@ namespace TutorialASP_net.Controllers
                     {
                         MySqlCommand command1 = new MySqlCommand();
                         command1.Connection = bdd.con;
-                        command1.CommandText = "INSERT INTO siteuser (username,email,password,roleid)" +
-                        "VALUES('" + newUser.username + "','" + newUser.email + "','" + newUser.password + "'," + 1 + ")";
+                        command1.CommandText = "CALL `RegisterUser`('"+newUser.username+"', '"+newUser.email+"', '"+newUser.password+"')";
                         command1.ExecuteNonQuery();
                         message = "Bienvenido " + newUser.username + ", ahora seras redigido para inicia sesion.";
                         IsSuccess = true;
@@ -244,7 +243,8 @@ namespace TutorialASP_net.Controllers
                 {
                     string folders = string.Concat("/static/img/user/", Session["userid"], "/profile/");
                     string ruta = Server.MapPath(string.Concat("~", folders));
-                    string filename = imguser.ImgProfileFile.FileName;
+                    Random rand = new Random();
+                    string filename = string.Concat(Session["userid"].ToString(),"-", DateTime.Now.ToShortDateString().Replace("/", ""),"-",rand.Next(0,100).ToString(),Path.GetExtension(imguser.ImgProfileFile.FileName));//imguser.ImgProfileFile.FileName;
                     Destination = string.Concat(ruta, filename);
                     RelativePath = string.Concat(folders, filename);
                     Directory.CreateDirectory(ruta);

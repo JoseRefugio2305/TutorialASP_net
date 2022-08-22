@@ -10,9 +10,12 @@ namespace TutorialASP_net.Models
     {
         public int userid { set; get; }
         public string username { set; get; }
+        public string chatName { set; get; }
         [Required(ErrorMessage = "No pedes enviar mensajes vacios")]
         public string mensaje { set; get; }
         public DateTime fechamsg { set; get; }
+        public DateTime lastLogChat { set; get; }
         public string photoprofile { set; get; }
+        public int roleuser { set; get; }
     }
 }

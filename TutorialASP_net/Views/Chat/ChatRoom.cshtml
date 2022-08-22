@@ -1,0 +1,195 @@
+﻿@model IEnumerable<TutorialASP_net.Models.MensajesChat>
+@{
+    ViewBag.Title = "Sala de Chat";
+}
+
+<div class="container">
+    <div class="card">
+        @*text-center*@
+        <div class="card-header">
+            <h1></h1>
+        </div>
+        <div class="card-body inbox_chat" id="chatBox">
+            <input type="hidden" value="1" id="GroupChatName" />
+            @if (Model != null)
+            {   <input type="hidden" value="@ViewBag.idroom" id="idRoom" />
+                foreach (var msg in Model)
+                {
+                    var count = 0;
+                    if (count == 0 && msg.lastLogChat < msg.fechamsg)
+                    {
+                        <span id="endChat"></span>
+                        count += 1;
+                    }
+                    if (msg.userid == (int)Session["userid"])
+                    {
+                        <div class="outgoing_msg">
+                            <div class="sent_msg">
+                                <p>
+                                    @msg.mensaje
+                                </p>
+                                <span class="time_date"> @msg.fechamsg</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="incoming_msg">
+                            <div class="incoming_msg_img"> <img style="width: 50%;" src="@msg.photoprofile" alt="sunil"> </div>
+                            <div class="received_msg">
+                                <div class="received_withd_msg">
+                                    <p>
+                                        <div class="col-md-12 username">
+                                            @msg.username @if (msg.roleuser == 2)
+                                            {<span class="administrator"><i class="fa-solid fa-user-shield"></i> - Administrador</span> }
+                                            else if (msg.roleuser == 3)
+                                            { <span class="superadmin"><i class="fa-solid fa-user-shield"></i> - Super Administrador</span>}
+                                        </div>
+                                        <div class="col-md-12 message">@msg.mensaje</div>
+                                    </p>
+                                    <span class="time_date"> @msg.fechamsg</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+            else
+            {
+                <h5>Este CHat No Existe</h5>
+            }
+
+
+            @*<ul id="discusion">
+            </ul>*@
+        </div>
+        <div class="card-footer text-muted">
+            <div class="row col-md-12">
+                <input type="text" class="form-control col-md-9" id="message" maxlength="250" />
+                <input type="button" class="btn btn-success col-md-2 offset-md-1 disabled" id="sendmessage" value="Enviar" />
+            </div>
+            <div class="row col-md-5">
+                <p id="NumCaracteres">250/250</p>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<input type="hidden" id="displayname" value="@Session["username"]" />
+<input type="hidden" id="profileChatImg" value="@Session["photo"]" />
+
+@section scripts{
+    <script src="~/Scripts/jquery.signalR-2.2.2.js"></script>
+    <script src="/signalr/hubs"></script>
+    <script type="text/javascript">
+        window.addEventListener("load", function () {
+            //console.log("ss")
+            document.getElementById("endChat").scrollIntoView(false)
+
+        })
+        $(function () {
+
+            var chat = $.connection.chatHub;
+            chat.client.sendChat = function (name, message, profileChatImg) {
+                var divName = $("<div />").text(name).html();
+                var divMessage = $("<div />").text(message).html();
+                var mensajenuevo = "";
+                if (name == "AddGroup")
+                {
+                    mensajenuevo = message;
+                }
+                else if (name == $("#displayname").val())
+                {
+                    mensajenuevo = "<div class='outgoing_msg'>"+
+                                        "<div class='sent_msg'>"+
+                                            "<p>"+
+                                                message+
+                                            "</p>"+
+                                                "<span class='time_date'> @DateTime.Now</span>"+
+                                        "</div>"+
+                                    "</div>"
+                }
+                else {
+                    mensajenuevo = '<div class="incoming_msg">' +
+                                '<div class="incoming_msg_img"> <img style="width: 50%;" src="'+profileChatImg+'" alt="sunil"> </div>' +
+                                    '<div class="received_msg">'+
+                                        '<div class="received_withd_msg">'+
+                                            '<p>'+
+                                                '<div class="col-md-12 username">'+
+                                                        name+
+                                                '</div>'+
+                                                '<div class="col-md-12 message">'+message+'</div>'+
+                                             '</p>'+
+                                            '<span class="time_date"> @DateTime.Now</span>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'
+                    @*mensajenuevo = "<div class='incoming_msg'>"+
+                        "<div class='incoming_msg_img'> <img style='width: 50%;' src='" + profileChatImg+"' alt='sunil'> </div>"+
+                            "<div class='received_msg'>"+
+                                "<div class='received_withd_msg'>"+
+                                    "<p>"+
+                                        message+
+                                    "</p>"+
+                                    "<span class='time_date'> @DateTime.Now</span>"+
+                                "</div>"+
+                            "</div>"+
+                        "</div>"*@
+                }
+                //var elementolista = "<li><strong>" + divName + "</strong>:  " + divMessage + "</li >"
+                //console.log(elementolista)
+                //$("#discusion").append(elementolista)
+                document.getElementById("chatBox").innerHTML += mensajenuevo
+            }
+
+            $("#message").focus()
+
+            $.connection.hub.start().done(function () {
+                var nameOwner = $("#displayname").val()
+                var groupName = @ViewBag.idroom
+                var idroomAct = $("#idRoom").val()
+                chat.server.addToGroup(@ViewBag.idroom, nameOwner)
+                $("#sendmessage").click(function () {
+                    if ($("#message").val() != '') {
+                        var nameOwner = $("#displayname").val()
+                        var messageText = $("#message").val()
+                        var profileChatImg = $("#profileChatImg").val()
+                        chat.server.send(groupName, nameOwner, messageText, profileChatImg)
+                        $("#message").val("").focus()
+                        document.getElementById("sendmessage").classList.add("disabled")
+                        document.getElementById("NumCaracteres").innerHTML = "250/250"
+                    }
+
+                })
+
+            })
+
+        })
+        $("#message").keyup(function () {
+            var mensaje = $("#message").val()
+            if (mensaje == '') {
+                document.getElementById("sendmessage").classList.add("disabled")
+            }
+            else {
+                var noValido = /[A-Za-z0-9]+/;
+
+                if (noValido.test(mensaje)) {
+                    document.getElementById("sendmessage").classList.remove("disabled")
+                } else {
+                    $("#message").val("").focus()
+                    mensaje = $("#message").val()
+
+                }
+
+
+            }
+            var caractrest = 250 - mensaje.length
+            document.getElementById("NumCaracteres").innerHTML = caractrest+"/250"
+
+        })
+
+    </script>
+}
+

@@ -58,7 +58,7 @@ textarea {
 }
 .incoming_msg_img {
     display: inline-block;
-    width: 6%;
+    width: 10%;
 }
 .received_msg {
     display: inline-block;
@@ -90,4 +90,97 @@ textarea {
 
 .error{
     color:red;
+}
+
+.username {
+    background: #ebebeb none repeat scroll 0 0;
+    font-weight:bold;
+    text-align:left;
+}
+.message {
+    background: #ebebeb none repeat scroll 0 0;
+}
+.administrator{
+    color:blue;
+    font-weight:bold;
+}
+.superadmin {
+    color: purple;
+    font-weight: bold;
+}
+
+.inbox_people {
+    background: #f8f8f8 none repeat scroll 0 0;
+    float: left;
+    overflow: hidden;
+    width: 100%;
+    border-right: 1px solid #c4c4c4;
+}
+.headind_srch {
+    padding: 10px 29px 10px 20px;
+    overflow: hidden;
+    border-bottom: 1px solid #c4c4c4;
+}
+.recent_heading {
+    float: left;
+    width: 40%;
+}
+.recent_heading h4 {
+    color: #05728f;
+    font-size: 21px;
+    margin: auto;
+}
+.srch_bar input {
+    border: 1px solid #cdcdcd;
+    border-width: 0 0 1px 0;
+    width: 80%;
+    padding: 2px 0 4px 6px;
+    background: none;
+}
+
+.srch_bar .input-group-addon button {
+    background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+    border: medium none;
+    padding: 0;
+    color: #707070;
+    font-size: 18px;
+}
+
+.srch_bar .input-group-addon {
+    margin: 0 0 0 -27px;
+}
+.chat_people {
+    overflow: hidden;
+    clear: both;
+}
+
+.chat_list {
+    border-bottom: 1px solid #c4c4c4;
+    margin: 0;
+    padding: 18px 16px 10px;
+}
+
+.active_chat {
+    background: #ebebeb;
+}
+.chat_img {
+    float: left;
+    width: 10%;
+}
+
+.chat_ib {
+    float: left;
+    padding: 0 0 0 15px;
+    width: 88%;
+}
+
+.search_bar{
+    float:right;
+    width:50%;
+}
+.input-group-addon{
+    float:right;
+}
+.chat_list:hover{
+    background:gray;
 }
