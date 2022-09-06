@@ -9,6 +9,8 @@ namespace TutorialASP_net.Models
     public class MensajesChat
     {
         public int userid { set; get; }
+        public int msgid { set; get; }
+        public int lastMsgId { set; get; }
         public string username { set; get; }
         public string chatName { set; get; }
         [Required(ErrorMessage = "No pedes enviar mensajes vacios")]

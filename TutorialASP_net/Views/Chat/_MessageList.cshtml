@@ -1,0 +1,85 @@
+﻿@model IEnumerable<TutorialASP_net.Models.MensajesChat>
+<div class="messageBox" id="messageBox">
+    @if (Model != null)
+    {
+        <input type="hidden" value="@ViewBag.idroom" id="idRoom" />
+        <input type="hidden" value="@ViewBag.lastMsgId" id="lastMsgId" />
+        <input type="hidden" value="@ViewBag.lastMsgOnRoom" id="lastMsgOnRoom" />
+
+        foreach (var msg in Model)
+        {
+            if (msg.lastMsgId != @ViewBag.lastMsgOnRoom)
+            {
+                if (msg.lastMsgId == msg.msgid)
+                {
+                    <div id="beginchat" style="width:100%;background:purple;color:white;font-weight:bold;text-align:center;">
+                        Bienvenido de Nuevo
+                    </div>
+                }
+                else if (msg.lastMsgId < @ViewBag.lastMsgOnRoom)
+                {
+                    if (msg.lastMsgId == msg.msgid)
+                    {
+                        <div id="beginchat" style="width:100%;background:purple;color:white;font-weight:bold;text-align:center;">
+                            Bienvenido de Nuevo
+                        </div>
+                    }
+                }
+
+            }
+            else
+            {
+                if (msg.lastMsgId == msg.msgid)
+                {
+                    <div id="beginchat" style="width:100%;background:purple;color:white;font-weight:bold;text-align:center;">
+                        Bienvenido de Nuevo
+                    </div>
+                }
+            }
+            if (msg.userid == (int)Session["userid"])
+            {
+                <div class="outgoing_msg" id="msg_@msg.msgid">
+                    <div class="sent_msg">
+                        <p class="message">
+                            @msg.mensaje
+                        </p>
+                        <span class="time_date"> @msg.fechamsg</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="incoming_msg" id="msg_@msg.msgid">
+                    <div class="incoming_msg_img"> <img style="width: 50%;" src="@msg.photoprofile" alt="sunil"> </div>
+                    <div class="received_msg">
+                        <div class="received_withd_msg">
+                            <p>
+                                <div class="col-md-12 username">
+                                    @msg.username @if (msg.roleuser == 2)
+                                    {<span class="administrator"><i class="fa-solid fa-user-shield"></i> - Administrador</span> }
+                                    else if (msg.roleuser == 3)
+                                    { <span class="superadmin"><i class="fa-solid fa-user-shield"></i> - Super Administrador</span>}
+                                </div>
+                                <div class="col-md-12 message">@msg.mensaje</div>
+                            </p>
+                            <span class="time_date"> @msg.fechamsg</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+
+</div>
+<div class="bg-light SendBox">
+    <form>
+        <span id="NumCaracteres">250/250</span>
+        <input class="form-control" id="txtMessage" placeholder="Mensaje" onkeyup="evalMessage()"/>
+        <a class="btn btn-primary disabled" id="btnSendMessage" onclick="sendMsg()"><i class="fas fa-paper-plane" aria-hidden="true"></i></a>
+    </form>
+</div>
+
+
+<script type="text/javascript">
+   
+</script>

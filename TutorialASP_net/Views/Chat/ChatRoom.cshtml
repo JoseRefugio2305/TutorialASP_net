@@ -3,27 +3,50 @@
     ViewBag.Title = "Sala de Chat";
 }
 
-<div class="container">
-    <div class="card">
+<div class="container" style="">
+    @*<div class="card-header position-fixed" style="margin-top:1%">
+        <h1></h1>
+    </div>*@
+    <div class="">
         @*text-center*@
-        <div class="card-header">
-            <h1></h1>
-        </div>
-        <div class="card-body inbox_chat" id="chatBox">
+
+        <div class="" id="chatBox" style="">
             <input type="hidden" value="1" id="GroupChatName" />
             @if (Model != null)
-            {   <input type="hidden" value="@ViewBag.idroom" id="idRoom" />
+            {<input type="hidden" value="@ViewBag.idroom" id="idRoom" />
                 foreach (var msg in Model)
                 {
-                    var count = 0;
-                    if (count == 0 && msg.lastLogChat < msg.fechamsg)
+                    if (msg.lastMsgId != @ViewBag.lastMsgOnRoom)
                     {
-                        <span id="endChat"></span>
-                        count += 1;
+                        if (msg.lastMsgId == msg.msgid)
+                        {
+                            <div id="beginchat" style="width:100%;background:purple;color:white;font-weight:bold;text-align:center;">
+                                Bienvenido de Nuevo
+                            </div>
+                        }
+                        else if (msg.lastMsgId < @ViewBag.lastMsgOnRoom)
+                        {
+                            if (msg.lastMsgId == msg.msgid)
+                            {
+                                <div id="beginchat" style="width:100%;background:purple;color:white;font-weight:bold;text-align:center;">
+                                    Bienvenido de Nuevo
+                                </div>
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        if (msg.lastMsgId == msg.msgid)
+                        {
+                            <div id="beginchat" style="width:100%;background:purple;color:white;font-weight:bold;text-align:center;">
+                                Bienvenido de Nuevo
+                            </div>
+                        }
                     }
                     if (msg.userid == (int)Session["userid"])
                     {
-                        <div class="outgoing_msg">
+                        <div class="outgoing_msg" id="msg_@msg.msgid">
                             <div class="sent_msg">
                                 <p>
                                     @msg.mensaje
@@ -34,7 +57,7 @@
                     }
                     else
                     {
-                        <div class="incoming_msg">
+                        <div class="incoming_msg" id="msg_@msg.msgid">
                             <div class="incoming_msg_img"> <img style="width: 50%;" src="@msg.photoprofile" alt="sunil"> </div>
                             <div class="received_msg">
                                 <div class="received_withd_msg">
@@ -57,38 +80,94 @@
             else
             {
                 <h5>Este CHat No Existe</h5>
+                <script>
+                    setTimeout(() => {
+                        window.location.href = "/Chat/"
+                    }, 500)
+                </script>
             }
 
 
             @*<ul id="discusion">
-            </ul>*@
+        </ul>*@
         </div>
-        <div class="card-footer text-muted">
-            <div class="row col-md-12">
-                <input type="text" class="form-control col-md-9" id="message" maxlength="250" />
-                <input type="button" class="btn btn-success col-md-2 offset-md-1 disabled" id="sendmessage" value="Enviar" />
-            </div>
-            <div class="row col-md-5">
-                <p id="NumCaracteres">250/250</p>
-            </div>
-        </div>
+        @*<div class="card-footer text-muted">
+                <div class="row col-md-12">
+                    <input type="text" class="form-control col-md-9" id="message" maxlength="250" />
+                    <input type="button" class="btn btn-success col-md-2 offset-md-1 disabled" id="sendmessage" value="Enviar" />
+                </div>
+                <div class="row col-md-5">
+                    <p id="NumCaracteres">250/250</p>
+                </div>
+            </div>*@
     </div>
 
 
 </div>
-
+<div class="bg-light card-footer fixed-bottom" style="width:100%">
+    <div class="row col-md-12">
+        <input type="text" class="form-control col-md-9" id="message" maxlength="250" />
+        <input type="button" class="btn btn-success col-md-2 offset-md-1 disabled" id="sendmessage" value="Enviar" />
+    </div>
+    <div class="row col-md-5">
+        <p id="NumCaracteres">250/250</p>
+    </div>
+</div>
 <input type="hidden" id="displayname" value="@Session["username"]" />
 <input type="hidden" id="profileChatImg" value="@Session["photo"]" />
+
 
 @section scripts{
     <script src="~/Scripts/jquery.signalR-2.2.2.js"></script>
     <script src="/signalr/hubs"></script>
     <script type="text/javascript">
+        var lastMsgView =@ViewBag.lastMsgId
+        var lasMsgOnRoom=@ViewBag.lastMsgOnRoom
+        var scrollPos = 0;
+        window.addEventListener('scroll', function () {
+            if ((document.body.getBoundingClientRect()).top > scrollPos)
+            {
+                
+            }
+            else
+            {
+                for (var i = lastMsgView; i <= lasMsgOnRoom; i++) {
+                    var elem = document.getElementById('msg_' + i);
+                    if (elem)
+                    {
+                        var clientRect = elem.getBoundingClientRect();
+
+                        if (clientRect.top > window.innerHeight) {
+                            lastMsgView = i
+                            //console.log(clientRect.top + " " + lastMsgView);
+                            //console.log("a");
+                            break;
+                        }
+                    }
+                    
+                }
+            }
+            scrollPos = (document.body.getBoundingClientRect()).top;
+        });
         window.addEventListener("load", function () {
             //console.log("ss")
-            document.getElementById("endChat").scrollIntoView(false)
-
+            document.getElementById("beginchat").scrollIntoView({ block: "center" })
+            for (var i = lastMsgView; i <= lasMsgOnRoom; i++) {
+                var elem = document.getElementById('msg_' + i);
+                if (elem)
+                {
+                    var clientRect = elem.getBoundingClientRect();
+                    
+                    if (clientRect.top > window.innerHeight)
+                    {
+                        lastMsgView = i
+                        break;
+                    }
+                }
+            }
         })
+
+
         $(function () {
 
             var chat = $.connection.chatHub;
@@ -97,6 +176,10 @@
                 var divMessage = $("<div />").text(message).html();
                 var mensajenuevo = "";
                 if (name == "AddGroup")
+                {
+                    mensajenuevo = message;
+                }
+                else if (name == "RemoveToGroup")
                 {
                     mensajenuevo = message;
                 }
@@ -149,8 +232,9 @@
             $.connection.hub.start().done(function () {
                 var nameOwner = $("#displayname").val()
                 var groupName = @ViewBag.idroom
-                var idroomAct = $("#idRoom").val()
+                //var idroomAct = $("#idRoom").val()
                 chat.server.addToGroup(@ViewBag.idroom, nameOwner)
+
                 $("#sendmessage").click(function () {
                     if ($("#message").val() != '') {
                         var nameOwner = $("#displayname").val()
@@ -163,6 +247,8 @@
                     }
 
                 })
+
+                window.addEventListener('unload', () => { var nameOwner = $("#displayname").val(); chat.server.removeFromGroup(@ViewBag.idroom, nameOwner, lastMsgView);}, false);
 
             })
 

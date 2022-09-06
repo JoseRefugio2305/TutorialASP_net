@@ -28,8 +28,9 @@ textarea {
 }
 /*Estilos del chat*/
 .inbox_chat {
-    height: 550px;
-    overflow-y: scroll;
+   height: 95%;
+   overflow-y: scroll;
+   z-index:3;
 }
 .time_date {
     color: #747474;
@@ -183,4 +184,15 @@ textarea {
 }
 .chat_list:hover{
     background:gray;
+}
+
+#chatBox{
+    margin-bottom: 10%;
+    width:100%;
+
+}
+@media (max-width: 650px) {
+    #chatBox {
+        margin-bottom: 30%;
+    }
 }

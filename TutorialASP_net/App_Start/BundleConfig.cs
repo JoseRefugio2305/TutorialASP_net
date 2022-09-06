@@ -25,6 +25,9 @@ namespace TutorialASP_net
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/Content/cssChat").Include(
+                      "~/Content/bootstrap.css",
+                      "~/Content/ChatStyle.css"));
         }
     }
 }

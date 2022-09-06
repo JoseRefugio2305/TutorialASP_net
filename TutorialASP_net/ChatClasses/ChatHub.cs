@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using TutorialASP_net.Datos;
+using TutorialASP_net.Models;
 
 namespace TutorialASP_net.ChatClasses
 {
@@ -22,8 +23,19 @@ namespace TutorialASP_net.ChatClasses
                 command.Connection = bdd.con;
                 int chatId = Int32.Parse(nameGroup);
                 command.CommandText = "CALL `InsertarMSG`('" + name + "', '" + message + "'," + chatId + ")";
-                command.ExecuteNonQuery();
-                
+                MySqlDataReader reader = command.ExecuteReader();
+                MensajesChat newMsg = new MensajesChat();
+
+                while (reader.Read())
+                {
+                                        newMsg.msgid = (int)reader["idmsg"];
+                    newMsg.mensaje = (string)reader["mensaje"];
+                    newMsg.fechamsg = (DateTime)reader["datemsg"];
+                    newMsg.username = (string)reader["username"];
+                    newMsg.photoprofile = (string)reader["profile_img"];
+                    newMsg.roleuser = (int)reader["roleid"];
+                }
+
                 bdd.con.Close();
                 //Clients.Group(nameGroup).sendChat(name, message, profileChatImg);
                 Clients.Group(nameGroup).sendChat(name, message, profileChatImg);
@@ -36,6 +48,12 @@ namespace TutorialASP_net.ChatClasses
         }
         public void AddToGroup(string room, string name)
         {
+            
+            Groups.Add(Context.ConnectionId, room);
+            Clients.Group(room).sendChat("AddGroup", name + " se ha unido a la sala de chat", "");
+        }
+        public void RemoveFromGroup(string room, string name, int lastMsgView)
+        {
             Conexion bdd = new Conexion();
             try
             {
@@ -43,24 +61,19 @@ namespace TutorialASP_net.ChatClasses
                 MySqlCommand command = new MySqlCommand();
                 command.Connection = bdd.con;
                 int chatId = Int32.Parse(room);
-                command.CommandText = "UPDATE ";
+                command.CommandText = "UPDATE userinroom set lastLoginChat=CURRENT_TIMESTAMP, lastMsgId="+lastMsgView+" where iduser=(SELECT userid FROM siteuser WHERE username='" + name + "' AND idroom=" + room + ")";
                 command.ExecuteNonQuery();
 
                 bdd.con.Close();
                 //Clients.Group(nameGroup).sendChat(name, message, profileChatImg);
-                Groups.Add(Context.ConnectionId, room);
-                Clients.Group(room).sendChat("AddGroup", name + " se ha unido a la sala de chat", "");
+                Groups.Remove(Context.ConnectionId, room);
+                Clients.Group(room).sendChat("RemoveToGroup", name + " ha salido del Chat", "");
             }
             catch (Exception e)
             {
                 string message = "Ocurrio un error al enviar el mensaje" + e;
             }
             
-        }
-        public void RemoveFromGroup(string room, string name)
-        {
-            Groups.Remove(Context.ConnectionId, room);
-            Clients.Group(room).sendChat("AddGroup", name + " se ha unido a la sala de chat", "");
         }
         public override Task OnConnected()
         {
