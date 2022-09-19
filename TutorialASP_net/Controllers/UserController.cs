@@ -25,7 +25,7 @@ namespace TutorialASP_net.Controllers
         {
             Boolean IsSuccess = false;
             string message = "";
-            if (ModelState.IsValid)
+            if (newUser.email!=null && newUser.password!=null && newUser.username!=null)
             {
                 try
                 {

@@ -36,6 +36,9 @@
                     <li class="nav-item">
                         <a href="/Chat/" class="nav-link active">Chat</a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/Chat/_TempView" class="nav-link active">Chat Nuevo</a>
+                    </li>
                 }
 
             </ul>
@@ -94,7 +97,7 @@
     @*@RenderSection("MySection", required: false)
         <p>Vista parcial cargada con RenderPage, este tambien funciona para cargr paginas que no sean vistas parciales. Puede ser usado mas de una vez a diferencia de RenderBody</p>
         @RenderPage("/Views/Shared/_PruebaPartialViewSimple.cshtml")*@
-    <script src="~/Scripts/jquery.signalR-2.2.2.js"></script>
+    @*<script src="~/Scripts/jquery.signalR-2.2.2.js"></script>
     <script src="/signalr/hubs"></script>
     <script>
         $(function () {
@@ -104,6 +107,6 @@
             }
             $.connection.hub.start().done()
         })
-    </script>
+    </script>*@
 </body>
 </html>

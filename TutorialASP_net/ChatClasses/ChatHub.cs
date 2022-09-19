@@ -13,7 +13,7 @@ namespace TutorialASP_net.ChatClasses
     public class ChatHub : Hub
     {
         public static int count = 0;
-        public void Send(string nameGroup,string name, string message,string profileChatImg)
+        public void Send(string nameGroup,string name, string message,string profileChatImg,int messageType)
         {
             Conexion bdd = new Conexion();
             try
@@ -22,23 +22,24 @@ namespace TutorialASP_net.ChatClasses
                 MySqlCommand command = new MySqlCommand();
                 command.Connection = bdd.con;
                 int chatId = Int32.Parse(nameGroup);
-                command.CommandText = "CALL `InsertarMSG`('" + name + "', '" + message + "'," + chatId + ")";
+                command.CommandText = "CALL `InsertarMSG`('" + name + "', '" + message + "'," + chatId + ","+messageType+")";
                 MySqlDataReader reader = command.ExecuteReader();
                 MensajesChat newMsg = new MensajesChat();
 
                 while (reader.Read())
                 {
-                                        newMsg.msgid = (int)reader["idmsg"];
+                    newMsg.msgid = (int)reader["idmsg"];
                     newMsg.mensaje = (string)reader["mensaje"];
                     newMsg.fechamsg = (DateTime)reader["datemsg"];
                     newMsg.username = (string)reader["username"];
                     newMsg.photoprofile = (string)reader["profile_img"];
                     newMsg.roleuser = (int)reader["roleid"];
+                    newMsg.msgtype = (int)reader["message_type"];
                 }
 
                 bdd.con.Close();
                 //Clients.Group(nameGroup).sendChat(name, message, profileChatImg);
-                Clients.Group(nameGroup).sendChat(name, message, profileChatImg);
+                Clients.Group(nameGroup).sendChat(newMsg.msgid,name, message, profileChatImg,messageType);
             }
             catch (Exception e)
             {
@@ -50,7 +51,7 @@ namespace TutorialASP_net.ChatClasses
         {
             
             Groups.Add(Context.ConnectionId, room);
-            Clients.Group(room).sendChat("AddGroup", name + " se ha unido a la sala de chat", "");
+            //Clients.Group(room).sendChat("AddGroup", "<p style='font-weight:bold;color:purple;'>"+name+"</p><p> se ha unido a chat.</p><br />", "");
         }
         public void RemoveFromGroup(string room, string name, int lastMsgView)
         {
@@ -67,7 +68,7 @@ namespace TutorialASP_net.ChatClasses
                 bdd.con.Close();
                 //Clients.Group(nameGroup).sendChat(name, message, profileChatImg);
                 Groups.Remove(Context.ConnectionId, room);
-                Clients.Group(room).sendChat("RemoveToGroup", name + " ha salido del Chat", "");
+                //Clients.Group(room).sendChat("RemoveToGroup", "<p style='font-weight:bold;color:purple;'>" + name + "</p><p> ha salido del chat.</p><br />", "");
             }
             catch (Exception e)
             {
@@ -75,18 +76,18 @@ namespace TutorialASP_net.ChatClasses
             }
             
         }
-        public override Task OnConnected()
-        {
+        //public override Task OnConnected()
+        //{
             
-            count++;
-            Clients.All.ConnectedCount(count);
-            return base.OnConnected();
-        }
-        public override Task OnDisconnected(bool stopCalled)
-        {
-            count--;
-            Clients.All.ConnectedCount(count);
-            return base.OnDisconnected(stopCalled);
-        }
+        //    count++;
+        //    Clients.All.ConnectedCount(count);
+        //    return base.OnConnected();
+        //}
+        //public override Task OnDisconnected(bool stopCalled)
+        //{
+        //    count--;
+        //    Clients.All.ConnectedCount(count);
+        //    return base.OnDisconnected(stopCalled);
+        //}
     }
 }

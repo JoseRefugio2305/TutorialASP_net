@@ -98,7 +98,7 @@ namespace TutorialASP_net.Controllers
             return View(messageList);
         }
 
-
+        [AuthorizationUser(role: "123")]
         public ActionResult _TempView()
         {
             Conexion bdd = new Conexion();
@@ -117,7 +117,8 @@ namespace TutorialASP_net.Controllers
                         lastMsgDate = (DateTime)reader["LastDateMsg"],
                         lastMsg = (string)reader["LastMessage"],
                         photoChat = (string)reader["profile_img"],
-                        usernameLastMsg = (string)reader["LastUser"] == (string)Session["username"] ? "Tú" : (string)reader["LastUser"]
+                        usernameLastMsg = (string)reader["LastUser"] == (string)Session["username"] ? "Tú" : (string)reader["LastUser"],
+                        msgType=(int)reader["type"]
                     });
 
                 }
@@ -135,7 +136,7 @@ namespace TutorialASP_net.Controllers
             ViewBag.inboxList = inboxList;
             return View();
         }
-
+        [AuthorizationUser(role: "123")]
         public ActionResult ChatPartial(int idroom)
         {
             Conexion bdd = new Conexion();
@@ -162,10 +163,12 @@ namespace TutorialASP_net.Controllers
                         photoprofile = (string)reader["profile_img"],
                         roleuser = (int)reader["roleid"],
                         lastLogChat = (DateTime)reader["lastLoginChat"],
-                        chatName = idroom == 1 ? (string)reader["RoomName"] : ""
+                        chatName = idroom == 1 ? (string)reader["RoomName"] : "",
+                        msgtype=(int)reader["message_type"]
                     });
 
                 }
+                reader.Close();
                 command = new MySqlCommand("SELECT idmsg FROM mensajes WHERE ChatRoomId = 2 AND idmsg >= (SELECT lastMsgId FROM userinroom WHERE iduser = 2 AND idroom = 1)", bdd.con);
                 reader = command.ExecuteReader();
                 List<int> listMsg = new List<int>();
@@ -174,7 +177,20 @@ namespace TutorialASP_net.Controllers
                     listMsg.Add(reader["idmsg"] == null ? 0 : (int)reader["idmsg"]);
                 }
                 reader.Close();
+                MySqlCommand commandS = new MySqlCommand("SELECT * FROM stikers", bdd.con);
+                MySqlDataReader readerS = commandS.ExecuteReader();
+                List<Stikers> stikersList = new List<Stikers>();
+                while (readerS.Read())
+                {
+                    stikersList.Add(new Stikers
+                    {
+                        id = (int)readerS["id"],
+                        ruta = "/static/img/stikers/"+(string)readerS["ruta"]
+                    });
+                }
+                readerS.Close();
                 bdd.con.Close();
+                ViewBag.stikers = stikersList;
                 ViewBag.idroom = idroom;
                 ViewBag.listMessages = listMsg;
                 if (messageList.Count() == 0)

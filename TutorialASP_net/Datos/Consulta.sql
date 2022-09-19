@@ -79,11 +79,11 @@ WHERE msg.idmsg=(SELECT MAX(idmsg) FROM mensajes WHERE userid=1 AND ChatRoomId=1
 		LIMIT 10) 
 
 
-SELECT idmsg FROM mensajes AS m
-INNER JOIN userinroom AS uir
-ON m.userid=uir.iduser
-WHERE m.ChatRoomId =1 AND m.idmsg>=(SELECT lastMsgId FROM userinroom WHERE iduser=1)
-ORDER BY m.idmsg
+SELECT idmsg FROM mensajes
+WHERE ChatRoomId=2 AND idmsg>=(SELECT lastMsgId FROM userinroom WHERE iduser=2 AND idroom=1)
+
+
+CALL `Get_Messages`(1, 1,2)
 
 
 (SELECT *, (SELECT lastMsgId FROM userinroom as uir WHERE uir.iduser=iduserChat AND uir.idroom=idRoomS) AS'lastMsgId',
@@ -102,4 +102,17 @@ ORDER BY m.idmsg
 		INNER JOIN chatroom AS cr ON m.ChatRoomId=cr.idRoom 
 		WHERE m.ChatRoomId=idRoomS AND m.idmsg>(SELECT uir.lastMsgId FROM userinroom AS uir WHERE uir.iduser=iduserChat AND uir.idroom=idRoomS)
 		ORDER BY m.idmsg ASC 
-		LIMIT 10);userinroom
+		LIMIT 10);userinroomsiteuserGet_MessagesInsertarMSG
+		
+		
+		
+		
+		
+		
+DROP TRIGGER 	AfterDeleteMsg
+		
+CREATE TRIGGER AfterDeleteMsg 
+AFTER DELETE ON
+mensajes
+FOR EACH ROW 
+UPDATE userinroom SET lastMsgId=1 WHERE iduser =old.userid AND idroom=old.ChatRoomId;

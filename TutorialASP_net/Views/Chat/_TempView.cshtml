@@ -30,13 +30,17 @@
                     <div class="chat_ib">
                         <h6>@item.roomname</h6><p><b><span class="chat_date">@item.lastMsgDate</span></b></p>
                         <p>
-                            <b>@item.usernameLastMsg: </b>@item.lastMsg
-                        </p>
+                            <b>@item.usernameLastMsg: </b>@if (item.msgType == 1)
+                            {@item.lastMsg}
+                        else if (item.msgType == 2)
+                        {
+                        <p>Stiker</p>}
+                            </p>
+                        </div>
                     </div>
-                </div>
 
-            </div>
-        }
+                </div>
+            }
     </div>
 
     <div class="col-8 bg-light" id="chatRoomBox">
@@ -45,9 +49,41 @@
     </div>
 
 </div>
+
+
+<div class="modal fade" id="modalFilesUpload" tabindex="-1" aria-labelledby="modalFilesUploadLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalFilesUploadLabel">Sube tus archivos aqui</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="cajaArchivos">
+                <form action="" id="formArchivos">
+                    <div style="border:solid black;">
+                        <section id="multi-selector-uniq">
+                            <input id="files" type="file" accept="image/*" multiple>
+                            <ul id="preview" class="list-group"></ul>
+                        </section>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <input type="hidden" id="displayname" value="@Session["username"]" />
 <input type="hidden" id="profileChatImg" value="@Session["photo"]" />
 @section scripts{
+    <script src="~/Scripts/inputdinamico.js"></script>
     <script src="~/Scripts/jquery.signalR-2.2.2.js"></script>
     <script src="/signalr/hubs"></script>
     <script type="text/javascript">
@@ -60,16 +96,14 @@
         function scrollMessages() {
             document.getElementById("messageBox").addEventListener("scroll", () => {
                 for (var i = lastMsgView; i <= lasMsgOnRoom; i++) {
-                    
+
                     var elem = document.getElementById('msg_' + i);
+
                     if (elem)
                     {
                         var clientRect = elem.getBoundingClientRect();
-
                         if (clientRect.top > window.innerHeight) {
                             lastMsgView = i
-                            //console.log(clientRect.top + " " + lastMsgView);
-                            //console.log("a");
                             break;
                         }
                     }
@@ -91,24 +125,26 @@
                     {
                         document.getElementById("beginchat").scrollIntoView({ block: "center" })
                     }
-                    
+
                     lastMsgView = document.getElementById("lastMsgId").value
                     lasMsgOnRoom = document.getElementById("lastMsgOnRoom").value
-                    for (var i = lastMsgView; i <= lasMsgOnRoom; i++) {
-                        var elem = document.getElementById('msg_' + i);
-                        if (elem)
-                        {
-                            var clientRect = elem.getBoundingClientRect();
+                    //for (var i = lastMsgView; i <= lasMsgOnRoom; i++) {
+                    //    console.log(i)
+                    //    //c = parseInt(i)
+                    //    var elem = document.getElementById('msg_' + i);
+                    //    if (elem)
+                    //    {
+                    //        console.log(i)
+                    //        var clientRect = elem.getBoundingClientRect();
 
-                            if (clientRect.top > window.innerHeight) {
+                    //        if (clientRect.top > window.innerHeight) {
 
-                                lastMsgView = i
-                                console.log(clientRect.top + " " + lastMsgView);
-                                break;
-                            }
-                        }
-                    }
-                    
+                    //            lastMsgView = i
+                    //            break;
+                    //        }
+                    //    }
+                    //}
+
                     scrollMessages()
                     var lastChat=document.getElementById("LastChatSelect").value = document.getElementById("ChatSelect").value
                     document.getElementById("ChatSelect").value = idChat
@@ -117,7 +153,7 @@
                     chat.server.removeFromGroup(lastChat, nameUser, lastMsgView);
                     chat.server.addToGroup(idChat, nameUser)
                     $("#txtMessage").focus()
-                    
+
                 }
             })
 
@@ -129,7 +165,7 @@
                 var messageText = $("#txtMessage").val()
                 var profileChatImg = $("#profileChatImg").val()
                 var groupName = document.getElementById("ChatSelect").value
-                chat.server.send(groupName, nameOwner, messageText, profileChatImg)
+                chat.server.send(groupName, nameOwner, messageText, profileChatImg,1)
                 $("#txtMessage").val("").focus()
                 document.getElementById("btnSendMessage").classList.add("disabled")
                 document.getElementById("NumCaracteres").innerHTML = "250/250"
@@ -137,54 +173,93 @@
 
         }
 
+        function SendStiker(ruta)
+        {
+            var nameOwner = $("#displayname").val()
+            var profileChatImg = $("#profileChatImg").val()
+            var groupName = document.getElementById("ChatSelect").value
+            chat.server.send(groupName, nameOwner, ruta, profileChatImg, 2)
+        }
+
         $.connection.hub.start().done(function () {
-            
-            window.addEventListener('unload', () => { var nameOwner = $("#displayname").val(); chat.server.removeFromGroup(document.getElementById("ChatSelect").value, nameOwner, lastMsgView);}, false);
-            
+
+            window.addEventListener('unload', () => {
+                var nameOwner = $("#displayname").val();
+                chat.server.removeFromGroup(document.getElementById("ChatSelect").value, nameOwner, lastMsgView);
+            }, false);
+
         })
-        
+
         var chat = $.connection.chatHub;
-        chat.client.sendChat = function (name, message, profileChatImg) {
+        chat.client.sendChat = function (idmsg,name, message, profileChatImg,msgType) {
             var divName = $("<div />").text(name).html();
             var divMessage = $("<div />").text(message).html();
             var mensajenuevo = "";
-            console.log(message)
-            if (name == "AddGroup")
+            if (name == $("#displayname").val())
             {
-                mensajenuevo = message;
-            }
-            else if (name == "RemoveToGroup")
-            {
-                mensajenuevo = message;
-            }
-            else if (name == $("#displayname").val())
-            {
-                mensajenuevo = "<div class='outgoing_msg'>"+
-                                    "<div class='sent_msg'>"+
-                                        "<p>"+
-                                            message+
-                                        "</p>"+
-                                            "<span class='time_date'> @DateTime.Now</span>"+
-                                    "</div>"+
-                                "</div>"
+                switch (msgType)
+                {
+                    case 1:
+                        mensajenuevo = "<div class='outgoing_msg'  id='msg_" + idmsg + "'>" +
+                                            "<div class='sent_msg'>"+
+                                                "<p>"+
+                                                    message+
+                                                "</p>"+
+                                                    "<span class='time_date'> @DateTime.Now</span>"+
+                                            "</div>"+
+                                    "</div>"
+                        break
+                    case 2:
+                        mensajenuevo = "<div class='outgoing_msg'  id='msg_" + idmsg + "'>"+
+                                            "<div class='sent_msg'>" +
+                                                "<img class='img-fluid' src='" + message + "' />" +
+                                                    "<span class='time_date'> @DateTime.Now</span>"+
+                                            "</div>"+
+                                    "</div>"
+                        break
+                }
+                lastMsgView = idmsg
+                document.getElementById("messageBox").innerHTML += mensajenuevo
+                document.getElementById("msg_" + idmsg).scrollIntoView({ block: "center" })
             }
             else {
-                mensajenuevo = '<div class="incoming_msg">' +
-                            '<div class="incoming_msg_img"> <img style="width: 50%;" src="'+profileChatImg+'" alt="sunil"> </div>' +
-                                '<div class="received_msg">'+
-                                    '<div class="received_withd_msg">'+
-                                        '<p>'+
-                                            '<div class="col-md-12 username">'+
-                                                    name+
-                                            '</div>'+
-                                            '<div class="col-md-12 message">'+message+'</div>'+
-                                            '</p>'+
-                                        '<span class="time_date"> @DateTime.Now</span>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>'
+
+                switch (msgType)
+                {
+                    case 1:
+                        mensajenuevo = '<div class="incoming_msg">' +
+                                            '<div class="incoming_msg_img"> <img style="width: 50%;" src="'+profileChatImg+'" alt="sunil"> </div>' +
+                                                '<div class="received_msg">'+
+                                                    '<div class="received_withd_msg">'+
+                                                        '<p>'+
+                                                            '<div class="col-md-12 username">'+
+                                                                    name+
+                                                            '</div>'+
+                                                            '<div class="col-md-12 message">'+message+'</div>'+
+                                                            '</p>'+
+                                                        '<span class="time_date"> @DateTime.Now</span>'+
+                                                    '</div>'+
+                                                '</div>'+
+                                        '</div>'
+                        break
+                    case 2:
+                        mensajenuevo = '<div class="incoming_msg">' +
+                                            '<div class="incoming_msg_img"> <img style="width: 50%;" src="'+profileChatImg+'" alt="sunil"> </div>' +
+                                                '<div class="received_msg">'+
+                                                    '<div class="received_withd_msg">'+
+                                                            '<div class="col-md-6 username">'+
+                                                                    name+
+                                                            '</div>'+
+                                                                 '<div class="col-md-6 message"><img class="img-fluid" src="' + message + '" /></div>'+
+                                                        '<span class="time_date"> @DateTime.Now</span>'+
+                                                    '</div>'+
+                                                '</div>'+
+                                        '</div>'
+                        break
+                }
+                document.getElementById("messageBox").innerHTML += mensajenuevo
             }
-            document.getElementById("messageBox").innerHTML += mensajenuevo
+
         }
 
         function evalMessage()
@@ -210,6 +285,73 @@
             document.getElementById("NumCaracteres").innerHTML = caractrest + "/250"
 
         }
+
+        //drag and drop
+        function dragOverHandler(event)
+        {
+            // Prevent default behavior (Prevent file from being opened)
+            event.preventDefault();
+            $('#modalFilesUpload').modal('show')
+        }
+        $('#modalFilesUpload').on('hidden.bs.modal', function (event) {
+            document.getElementById("formArchivos").reset()
+            filesList = []
+            document.getElementById("preview").innerHTML = ''
+        })
+
+        //document.getElementById("cajaArchivos").addEventListener("drop", async () => {
+        //    console.log('Fichero(s) arrastrados');
+
+        //    // Evitar el comportamiendo por defecto (Evitar que el fichero se abra/ejecute)
+        //    event.preventDefault();
+
+        //    if (event.dataTransfer.items) {
+        //        //Usar la interfaz DataTransferItemList para acceder a el/los archivos)
+        //        const archivos = []
+        //        const arch = Array.from(event.dataTransfer.items)
+        //        arch.forEach(element => {
+        //            archivos.push(element.getAsFile())
+        //        });
+        //        const newFilesList = Array.from(fileInputMulti.files);
+        //        newFilesList, msgAlert = await getOnlyImages(newFilesList);
+        //        console.log(newFilesList)
+        //        if (msgAlert != '') {
+        //            Swal.fire(
+        //                'Lo sentimos',
+        //                msgAlert,
+        //                'error'
+        //            )
+        //        }
+        //        // Update list files
+        //        filesList = await getUniqFiles(archivos, filesList);
+        //        // Only DEMO. Redraw
+        //        renderPreviews(filesList, multiSelectorUniqPreview, fileInputMulti);
+        //        // Set data to input
+        //        fileInputMulti.files = arrayFilesToFileList(filesList);
+                
+        //        for (var i = 0; i < archivos.length; i++) {
+        //            // Si los elementos arrastrados no son ficheros, rechazarlos
+        //            if (archivos[i].kind === 'file') {
+        //                var file = archivos[i].getAsFile();
+        //                console.log('...es un fichero file[' + i + '].name = ' + file.name);
+        //            }
+        //        }
+        //    }
+        //    else {
+        //        // Usar la interfaz DataTransfer para acceder a el/los archivos
+        //        for (var i = 0; i < event.dataTransfer.files.length; i++) {
+        //            console.log('... file[' + i + '].name = ' + event.dataTransfer.files[i].name);
+        //        }
+        //    }
+        //})
+        function dropHandler(event)
+        {
+            
+
+        //     // Pasar el evento a removeDragData para limpiar
+        //     //removeDragData(event)
+        }
     </script>
 }
+
 

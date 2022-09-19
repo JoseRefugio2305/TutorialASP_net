@@ -19,5 +19,6 @@ namespace TutorialASP_net.Models
         public DateTime lastLogChat { set; get; }
         public string photoprofile { set; get; }
         public int roleuser { set; get; }
+        public int msgtype { set; get; }
     }
 }

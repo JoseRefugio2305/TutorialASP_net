@@ -13,6 +13,6 @@ namespace TutorialASP_net.Models
         public string lastMsg { set; get; }
         public string photoChat { set; get; }
         public string usernameLastMsg { set; get; }
-
+        public int msgType { set; get; }
     }
 }
