@@ -279,6 +279,7 @@
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\LogeoUser.cs" />
     <Compile Include="Models\MensajesChat.cs" />
+    <Compile Include="Models\SendFilesVM.cs" />
     <Compile Include="Models\Stikers.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -549,11 +550,11 @@
     <Content Include="Views\User\Registration.cshtml" />
     <Content Include="Views\User\Login.cshtml" />
     <Content Include="Views\Shared\_LayoutTest.cshtml" />
-    <Content Include="Views\Chat\Index.cshtml" />
+    <Content Include="Views\Chat\Index_anterior.cshtml" />
     <Content Include="Views\User\UserProfile.cshtml" />
     <Content Include="Views\Chat\ChatRoom.cshtml" />
     <Content Include="Views\Shared\_footer.cshtml" />
-    <Content Include="Views\Chat\_TempView.cshtml" />
+    <Content Include="Views\Chat\Index.cshtml" />
     <Content Include="Views\Shared\_ChatLayout.cshtml" />
     <Content Include="Views\Chat\_MessageList.cshtml" />
   </ItemGroup>

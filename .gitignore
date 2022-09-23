@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+#Archivos estaticos como imagenes y demas archivos
+
+TutorialASP_net/static/img/Chats
+TutorialASP_net/static/img/user

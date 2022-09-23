@@ -47,6 +47,10 @@ namespace TutorialASP_net.ChatClasses
             }
             
         }
+
+
+
+
         public void AddToGroup(string room, string name)
         {
             
@@ -62,7 +66,7 @@ namespace TutorialASP_net.ChatClasses
                 MySqlCommand command = new MySqlCommand();
                 command.Connection = bdd.con;
                 int chatId = Int32.Parse(room);
-                command.CommandText = "UPDATE userinroom set lastLoginChat=CURRENT_TIMESTAMP, lastMsgId="+lastMsgView+" where iduser=(SELECT userid FROM siteuser WHERE username='" + name + "' AND idroom=" + room + ")";
+                command.CommandText = "UPDATE userinroom set lastLoginChat=CURRENT_TIMESTAMP, lastMsgId="+lastMsgView+" where iduser=(SELECT userid FROM siteuser WHERE username='" + name + "')AND idroom=" + room + "";
                 command.ExecuteNonQuery();
 
                 bdd.con.Close();

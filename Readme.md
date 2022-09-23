@@ -12,6 +12,12 @@
   - [MySQL for Visual Studio 1.2.10](https://dev.mysql.com/downloads/windows/visualstudio/1.2.html)
 - Bootstrap 4.6
 
+## Plantilla para subir multiples archivos con vista previa de nombre 
+- [JAVASCRIPT INPUT FILE MULTIPLE SIN REPETICIONES CON PREVIA](https://programadorwebvalencia.com/javascript-input-file-multiple-sin-repeticiones-y-previa/)
+
+En el tutorial se muestra un input file que es capaz de identificar archivos repetidos, puede dar una lista previa de los nombres de los archivos seleccionados, es posible el reordenarlos, ademas de que se pueden eliminar archivos de la seleccion.
+
+
 ## Plantilla Chat
 - [Message Chat Box](https://bootsnipp.com/snippets/1ea0N)
 # Conexión a MySQL
@@ -27,3 +33,4 @@ public class Conexion
                                                           "Password=<Pass>");
     }
 ```
+

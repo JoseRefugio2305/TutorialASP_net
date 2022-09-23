@@ -1,0 +1,61 @@
+﻿@model IEnumerable<TutorialASP_net.Models.ChatInbox>
+@{
+    ViewBag.Title = "Chats";
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1>Tus Chats</h1>
+        </div>
+        <div class="card-body inbox_people">
+            <div class="headind_srch">
+                <div class="recent_heading">
+                    <h4>Recent</h4>
+                </div>
+                <div class="srch_bar">
+                    <div class="stylish-input-group">
+                        <input type="text" class="search_bar" placeholder="Search">
+                        <span class="input-group-addon">
+                            <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="inbox_chat">
+                @if (Model != null)
+                {
+                    foreach (var chat in Model)
+                    {
+                        <div class="chat_list" onclick="GoToRoom(@chat.idroom)">
+                            @*active_chat*@
+                            <div class="chat_people">
+                                <div class="chat_img"> <img style="width: 80%;" src="@chat.photoChat" alt="sunil"> </div>
+                                <div class="chat_ib">
+                                    <h5>@chat.roomname</h5><p><b><span class="chat_date">@chat.lastMsgDate</span></b></p>
+                                    <p>
+                                        <b>@chat.usernameLastMsg: </b>@chat.lastMsg
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="chat_list">
+                        <h5>No posees Chats</h5>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>      
+</div>
+
+<script>
+    function GoToRoom(idroom)
+    {
+        window.location.href = "/Chat/ChatRoom?idroom=" + idroom
+    }
+</script>
