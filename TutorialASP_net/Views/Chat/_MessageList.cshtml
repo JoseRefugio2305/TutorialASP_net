@@ -60,7 +60,7 @@
                         break;
 
                     case 3:
-                        <div class='outgoing_msg' id="msg_@msg.msgid">
+                        <div class='outgoing_msg' id="msg_@msg.msgid" oncontextmenu="MenuImagen('@msg.mensaje','msg_@msg.msgid')">
                             <div class='sent_msg'>
                                 <img class='img-fluid' src='@msg.mensaje' />
                                 <span class='time_date'> @DateTime.Now</span>
@@ -71,11 +71,11 @@
                         <div class='outgoing_msg' id="msg_@msg.msgid">
                             <div class='sent_msg'>
                                 <div class="row" style="background: gray; border-radius: 5px; background: #05728f none repeat scroll 0 0;">
-                                    <div class="col-md-3" style="text-align: center; margin-top: 5%; margin-bottom:5%">
+                                    <a href="/Chat/DownLoadFile?ruta=@msg.mensaje" class="col-md-3" style="color:black;text-align: center; margin-top: 5%; margin-bottom:5%">
                                         <i class="fa-sharp fa-solid fa-file  fa-3x" style="width:100%"></i>
-                                    </div>
+                                    </a>
                                     <div class="col-md-9"style=" margin-top: 5%; margin-bottom:5%" >
-                                        <b>@msg.mensaje</b>
+                                        <b>@msg.mensaje.Split('/')[6]</b>
                                     </div>
                                     
                                 </div>
@@ -155,11 +155,11 @@
                                         { <span class="superadmin"><i class="fa-solid fa-user-shield"></i> - Super Administrador</span>}
                                     </div>
                                     <div class="row" style="background: gray; border-radius: 5px; background: #ebebeb none repeat scroll 0 0; width:80%">
-                                        <div class="col-md-3" style="text-align: center; margin-top: 5%; margin-bottom:5%">
+                                        <a href="/Chat/DownLoadFile?ruta=@msg.mensaje" class="col-md-3" style="color:black; text-align: center; margin-top: 5%; margin-bottom:5%">
                                             <i class="fa-sharp fa-solid fa-file  fa-3x" style="width:100%"></i>
-                                        </div>
+                                        </a>
                                         <div class="col-md-9" style=" margin-top: 5%; margin-bottom:5%">
-                                            <b>@msg.mensaje</b>
+                                            <b>@msg.mensaje.Split('/')[6]</b>
                                         </div>
 
                                     </div>

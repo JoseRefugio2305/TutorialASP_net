@@ -248,6 +248,13 @@ namespace TutorialASP_net.Controllers
 
         //    return new String(Charsarr);
         //}
+
+        public FileResult DownLoadFile(string ruta)
+        {
+            var file = Server.MapPath(ruta);
+            string fileName = ruta.Split('/')[6];
+            return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
     }
     
 }
