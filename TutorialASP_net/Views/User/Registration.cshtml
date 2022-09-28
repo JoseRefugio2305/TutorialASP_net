@@ -48,7 +48,7 @@
                         @Html.ValidationMessageFor(m => m.password, "", new { @class = "error" })
                     </div>
                     <div class="form-group">
-                        <a onclick="RegisterUser()" class="btn btn-primary btn-block">Submit</a>
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
                     </div>
                 </form>
             </div>
@@ -59,7 +59,8 @@
 </div>
 
 <script>
-    function RegisterUser() {
+    document.getElementById("RegisterUserForm").addEventListener('submit', (event) => {
+        event.preventDefault()
         var emailval = document.getElementById("email")
         var usernameval = document.getElementById("username")
         var expremail = /^(([^<>()[\]\.,;:\s@@\"]+(\.[^<>()[\]\.,;:\s@@\"]+)*)|(\".+\"))@@(([^<>()[\]\.,;:\s@@\"]+\.)+[^<>()[\]\.,;:\s@@\"]{2,})$/i
@@ -103,6 +104,9 @@
                 'error'
             )
         }
+    })
+    function RegisterUser() {
+        
 
     }
 </script>

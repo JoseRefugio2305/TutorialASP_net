@@ -127,7 +127,8 @@ SET @imgprofile='/static/img/no_user.png';
 				(SELECT message_type FROM mensajes WHERE idmsg=(SELECT MAX(idmsg) FROM mensajes WHERE ChatRoomId=1)) AS 'type',
 				(SELECT datemsg FROM mensajes WHERE idmsg=(SELECT MAX(idmsg) FROM mensajes WHERE ChatRoomId=1)) AS 'LastDateMsg',
 				(SELECT username FROM siteuser WHERE userid=(SELECT DISTINCT(userid) FROM mensajes WHERE datemsg=(SELECT MAX(datemsg)FROM mensajes WHERE chatroomid=uir.idroom))) AS 'LastUser',
-				@imgprofile AS 'profile_img'
+				@imgprofile AS 'profile_img',
+				(SELECT COUNT(*) FROM mensajes WHERE ChatRoomId=1 AND idmsg>(SELECT lastMsgId FROM userinroom WHERE iduser=1 AND idroom=1))
 		FROM userinroom AS uir
 		WHERE uir.iduser=1 AND uir.idroom=1
 		union
@@ -136,10 +137,31 @@ SET @imgprofile='/static/img/no_user.png';
 			(SELECT message_type FROM mensajes WHERE idmsg=(SELECT MAX(idmsg) FROM mensajes WHERE ChatRoomId=uir.idroom)) AS 'type',
 			(SELECT datemsg FROM mensajes WHERE idmsg=(SELECT MAX(idmsg) FROM mensajes WHERE chatroomid=uir.idroom)) AS 'LastDateMsg',
 			(SELECT username FROM siteuser WHERE userid=(SELECT DISTINCT(userid) FROM mensajes WHERE datemsg=(SELECT MAX(datemsg)FROM mensajes WHERE chatroomid=uir.idroom))) AS 'LastUser',
-			(SELECT profile_img FROM siteuser WHERE userid=(SELECT iduser FROM userinroom WHERE idroom=uir.idroom AND iduser!=1)) AS 'profile_img'
+			(SELECT profile_img FROM siteuser WHERE userid=(SELECT iduser FROM userinroom WHERE idroom=uir.idroom AND iduser!=1)) AS 'profile_img',
+			(SELECT COUNT(*) FROM mensajes WHERE ChatRoomId=uir.idroom AND idmsg>(SELECT lastMsgId FROM userinroom WHERE iduser=1 AND idroom=uir.idroom))
 		FROM userinroom AS uir
-		WHERE uir.iduser=1 AND uir.idroom!=1 AND (SELECT COUNT(mensaje) FROM mensajes WHERE userid=1 AND ChatRoomId=uir.idroom);
+		WHERE uir.iduser=1 AND uir.idroom!=1 AND LastMessage!=null;
 		
 		
 		
 SELECT idmsg FROM mensajes WHERE ChatRoomId = 2 AND idmsg >= (SELECT lastMsgId FROM userinroom WHERE iduser = 1 AND idroom = 1)
+
+SET @lastmasgIDUser=(SELECT lastMsgId FROM userinroom as uir WHERE uir.iduser=1 AND uir.idroom=1);
+SET @conteo=(SELECT COUNT(*) FROM mensajes WHERE idmsg>=@lastmasgIDUser AND ChatRoomId=1);
+SELECT *, (SELECT lastMsgId FROM userinroom as uir WHERE uir.iduser=1 AND uir.idroom=1) AS'lastMsgId',
+		(SELECT MAX(idmsg) FROM mensajes as msg WHERE msg.ChatRoomId=1) AS'lastMsgOnRoom'
+		FROM mensajes AS m 
+		INNER JOIN siteuser AS su ON m.userid=su.userid 
+		INNER JOIN chatroom AS cr ON m.ChatRoomId=cr.idRoom 
+		WHERE m.ChatRoomId=1 AND m.idmsg<@lastmasgIDUser
+		##ORDER BY idmsg DESC 
+		##LIMIT 10
+UNION all
+SELECT *, (SELECT lastMsgId FROM userinroom as uir WHERE uir.iduser=1 AND uir.idroom=1) AS'lastMsgId',
+		(SELECT MAX(idmsg) FROM mensajes as msg WHERE msg.ChatRoomId=1) AS'lastMsgOnRoom'
+		FROM mensajes AS m 
+		INNER JOIN siteuser AS su ON m.userid=su.userid 
+		INNER JOIN chatroom AS cr ON m.ChatRoomId=cr.idRoom 
+		WHERE m.ChatRoomId=1 AND m.idmsg>=@lastmasgIDUser
+ORDER BY idmsg
+LIMIT 20
