@@ -24,14 +24,14 @@ namespace TutorialASP_net.Controllers
             try
             {
                 bdd.con.Open();
-                MySqlCommand command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 2, 0)", bdd.con);
+                MySqlCommand command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 2, 0,' ')", bdd.con);
                 MySqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
                     inboxList.Add(new ChatInbox
                     {
                         idroom = (int)reader["idroom"],
-                        roomname = (int)reader["idroom"] == 1 ? "General" : (string)reader["LastUser"],
+                        roomname = (string)reader["RoomName"],
                         lastMsgDate = (DateTime)reader["LastDateMsg"],
                         lastMsg = (string)reader["LastMessage"],
                         photoChat = (string)reader["profile_img"],
@@ -41,7 +41,14 @@ namespace TutorialASP_net.Controllers
 
                 }
                 reader.Close();
-
+                
+            }
+            catch (Exception e)
+            {
+                string message = "Ocurrio un error al intentar el registro de usuario" + e;
+            }
+            try
+            {
                 MySqlCommand commandS = new MySqlCommand("SELECT * FROM stikers", bdd.con);
                 MySqlDataReader readerS = commandS.ExecuteReader();
                 List<Stikers> stikersList = new List<Stikers>();
@@ -57,71 +64,19 @@ namespace TutorialASP_net.Controllers
                 ViewBag.stikers = stikersList;
 
                 bdd.con.Close();
-                if (inboxList.Count() == 0)
-                {
-                    inboxList = null;
-                }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 string message = "Ocurrio un error al intentar el registro de usuario" + e;
             }
-
+            if (inboxList.Count() == 0)
+            {
+                inboxList = null;
+            }
             ViewBag.inboxList = inboxList;
             return View();
         }
-        //[AuthorizationUser(role: "123")]
-        //public ActionResult ChatRoom(int idroom)
-        //{
-        //    Conexion bdd = new Conexion();
-        //    List<MensajesChat> messageList = new List<MensajesChat>();
-        //    try
-        //    {
-
-
-        //        bdd.con.Open();
-        //        MySqlCommand command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 1, " + idroom + ")", bdd.con);
-        //        MySqlDataReader reader = command.ExecuteReader();
-        //        while (reader.Read())
-        //        {
-        //            ViewBag.lastMsgId = (int)reader["lastMsgId"];
-        //            ViewBag.lastMsgOnRoom = (int)reader["lastMsgOnRoom"];
-        //            messageList.Add(new MensajesChat
-        //            {
-        //                userid = (int)reader["userid"],
-        //                msgid = (int)reader["idmsg"],
-        //                lastMsgId = (int)reader["lastMsgId"],
-        //                mensaje = (string)reader["mensaje"],
-        //                fechamsg = (DateTime)reader["datemsg"],
-        //                username = (string)reader["username"],
-        //                photoprofile = (string)reader["profile_img"],
-        //                roleuser = (int)reader["roleid"],
-        //                lastLogChat = (DateTime)reader["lastLoginChat"],
-        //                chatName = idroom == 1 ? (string)reader["RoomName"] : ""
-        //            });
-
-        //        }
-        //        command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 1, " + idroom + ")", bdd.con);
-        //        reader.Close();
-        //        bdd.con.Close();
-        //        ViewBag.idroom = idroom;
-        //        if (messageList.Count() == 0)
-        //        {
-        //            messageList = null;
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        string message = "Ocurrio un error al intentar el registro de usuario" + e;
-        //    }
-        //    return View(messageList);
-        //}
-
-        //[AuthorizationUser(role: "123")]
-        //public ActionResult _TempView()
-        //{
-            
-        //}
+        
         [AuthorizationUser(role: "123")]
         public ActionResult ChatPartial(int idroom)
         {
@@ -132,7 +87,7 @@ namespace TutorialASP_net.Controllers
 
 
                 bdd.con.Open();
-                MySqlCommand command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 1, " + idroom + ")", bdd.con);
+                MySqlCommand command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 1, " + idroom + ",' ')", bdd.con);
                 MySqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
@@ -254,6 +209,44 @@ namespace TutorialASP_net.Controllers
             var file = Server.MapPath(ruta);
             string fileName = ruta.Split('/')[6];
             return File(file, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        public ActionResult Busqueda(string busqueda)
+        {
+            Conexion bdd = new Conexion();
+            List<ChatInbox> inboxList = new List<ChatInbox>();
+            try
+            {
+                bdd.con.Open();
+                MySqlCommand command = new MySqlCommand("CALL `Get_Messages`(" + Session["userid"] + ", 3, 0,'%"+busqueda+"%')", bdd.con);
+                MySqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    inboxList.Add(new ChatInbox
+                    {
+                        idroom = (int)reader["idroom"],
+                        roomname = (string)reader["RoomName"],
+                        lastMsgDate = (DateTime)reader["LastDateMsg"],
+                        lastMsg = (string)reader["LastMessage"],
+                        photoChat = (string)reader["profile_img"],
+                        usernameLastMsg = (string)reader["LastUser"] == (string)Session["username"] ? "Tú" : (string)reader["LastUser"],
+                        msgType = (int)reader["type"]
+                    });
+
+                }
+                reader.Close();
+                bdd.con.Close();
+                if (inboxList.Count() == 0)
+                {
+                    inboxList = null;
+                }
+            }
+            catch (Exception e)
+            {
+                string message = "Ocurrio un error al intentar el registro de usuario" + e;
+            }
+            
+            return PartialView("_search", inboxList);
         }
     }
     

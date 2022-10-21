@@ -21,7 +21,7 @@
         <div class="headind_srch">
             <div class="srch_bar">
                 <div class="stylish-input-group">
-                    <input type="text" class="search_bar" placeholder="Search">
+                    <input type="text" class="search_bar" name="srchInput" id="srchInput" placeholder="Search">
                     <span class="input-group-addon">
                         <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
                     </span>
@@ -32,26 +32,28 @@
             <input type="hidden" id="ChatSelect" value="0" />
             <input type="hidden" id="LastChatSelect" value="0" />
         </form>
-        @foreach (var item in ViewBag.inboxList)
-        {
-            <div class="chat_list" onclick="LoadChat(@item.idroom)">
+        <div id="listInboxMsg">
+            @foreach (var item in ViewBag.inboxList)
+            {
+                <div class="chat_list" onclick="LoadChat(@item.idroom)">
 
-                <div class="chat_people">
-                    <div class="chat_img"> <img class="img-fluid" src="@item.photoChat" alt="sunil"> </div>
-                    <div class="chat_ib">
-                        <h6>@item.roomname</h6><p><b><span class="chat_date">@item.lastMsgDate</span></b></p>
-                        <p>
-                            <b>@item.usernameLastMsg: </b>@if (item.msgType == 1)
-                            {@item.lastMsg}
-                        else if (item.msgType == 2)
-                        {
-                        <p>Stiker</p>}
-                            </p>
+                    <div class="chat_people">
+                        <div class="chat_img"> <img class="img-fluid" src="@item.photoChat" alt="sunil"> </div>
+                        <div class="chat_ib">
+                            <h6>@item.roomname</h6><p><b><span class="chat_date">@item.lastMsgDate</span></b></p>
+                            <p>
+                                <b>@item.usernameLastMsg: </b>@if (item.msgType == 1)
+                                {@item.lastMsg}
+                            else if (item.msgType == 2)
+                            {
+                            <p>Stiker</p>}
+                                
+                            </div>
                         </div>
-                    </div>
 
-                </div>
-            }
+                    </div>
+                }
+        </div>
     </div>
 
     <div class="col-8 bg-light" id="chatRoomBox" style="text-align:center">
@@ -201,8 +203,8 @@
                         observer.observe(element);
                     }
                 })
-                
-                
+
+
             }
             $.ajax({
                 type: "POST",
@@ -210,7 +212,7 @@
                 success: (response) => {
                     if (document.getElementById("imgLoadChat")) {
                         document.getElementById("imgLoadChat").style.display = "none"
-                        
+
                     }
                     document.getElementById("chatRoomBox").innerHTML = response
                     if (document.getElementById("beginchat"))
@@ -236,14 +238,14 @@
                     //        }
                     //    }
                     //}
-                                     
-           
+
+
                     //scrollMessages()
-                    
+
                     document.getElementById("ChatSelect").value = idChat
                     //debugger;
                     console.log(lastMsgView + "ppp")
-                    
+
                     chat.server.addToGroup(idChat, nameUser)
                     $("#txtMessage").focus()
 
@@ -257,7 +259,7 @@
                 lastMsgView = entries[0].target.id.split("_")[1]
                 console.log(lastMsgView)
             } else {
-                
+
             }
         }
 
@@ -439,7 +441,7 @@
             event.preventDefault()
             var data = document.getElementById("formArchivos")
             data = new FormData(data)
-            
+
             document.getElementById("UploadFilesAlert").style.display=''
             $("#modalFilesUpload").modal('hide')
             fetch('@Url.Action("SubirArchivos","Chat")', {
@@ -471,6 +473,17 @@
             console.log(ruta,event)
         }
 
+        document.getElementById("srchInput").addEventListener("keyup", (event) => {
+            var textsearch = event.target.value
+            $.ajax({
+                type: "POST",
+                url: "/Chat/Busqueda?busqueda=" + textsearch,
+                success: (response) => {
+                    document.getElementById("listInboxMsg").innerHTML=response
+
+                }
+            })
+        })
     </script>
 }
 

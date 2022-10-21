@@ -1,0 +1,24 @@
+﻿@model IEnumerable<TutorialASP_net.Models.ChatInbox>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <div class="chat_list" onclick="LoadChat(@item.idroom)">
+
+            <div class="chat_people">
+                <div class="chat_img"> <img class="img-fluid" src="@item.photoChat" alt="sunil"> </div>
+                <div class="chat_ib">
+                    <h6>@item.roomname</h6><p><b><span class="chat_date">@item.lastMsgDate</span></b></p>
+                    <p>
+                        <b>@item.usernameLastMsg: </b>@if (item.msgType == 1)
+                        {@item.lastMsg}
+                    else if (item.msgType == 2)
+                    {
+                    <p>Stiker</p>}
+
+                    </div>
+                </div>
+
+            </div>
+        }
+}
